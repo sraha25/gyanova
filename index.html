@@ -1,0 +1,1510 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Gyanova Academy | Mobile Portal</title><meta name="description" content="Gyanova Academy — Empowering Students for Academic Excellence (WBBSE Class 5–10 & WBCHSE Class 11–12). Boardghar & Madhyamgram Centers."><link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w128"><meta property="og:title" content="Gyanova Academy | Admissions Open"><meta property="og:description" content="WBBSE (Class 5–10) & WBCHSE (Class 11–12) coaching with monthly exams, computer studies, and doubt clearing sessions."><meta property="og:type" content="website"><meta property="og:image" content="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w600"><link rel="preconnect" href="https://script.google.com" crossorigin><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin><link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
+<script>
+window.__DRIVE_VIDEO_ID = '18u6Mx6_oOuydS01kvIFE6qK2L5N0Tn-i';
+window.__DRIVE_LOGO_ID = '1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2';
+window.__REVIEWS_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
+window.__DRIVE_LOGO_URLS = [
+  'https://lh3.googleusercontent.com/d/' + window.__DRIVE_LOGO_ID + '=w600',
+  'https://drive.google.com/thumbnail?id=' + window.__DRIVE_LOGO_ID + '&sz=w600',
+  'https://drive.google.com/uc?export=view&id=' + window.__DRIVE_LOGO_ID
+];
+window.__driveLogoScriptPromise = null;
+window.fetchLogoViaScript = function () {
+  if (window.__driveLogoScriptPromise) return window.__driveLogoScriptPromise;
+  window.__driveLogoScriptPromise = (async function () {
+    const cacheKey = 'gyanova_logo_v2_' + window.__DRIVE_LOGO_ID;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached && cached.startsWith('data:')) return cached;
+    } catch (e) {}
+    const api = window.__REVIEWS_API;
+    if (!api || api.startsWith('PASTE_')) return null;
+    for (const action of ['photo', 'thumb']) {
+      try {
+        const res = await fetch(api + (api.includes('?') ? '&' : '?') + 'action=' + action + '&id=' + encodeURIComponent(window.__DRIVE_LOGO_ID));
+        const data = await res.json();
+        if (data && data.ok && typeof data.data === 'string' && data.data.startsWith('data:')) {
+          try { localStorage.setItem(cacheKey, data.data); } catch (e) {}
+          return data.data;
+        }
+      } catch (e) {}
+    }
+    return null;
+  })();
+  return window.__driveLogoScriptPromise;
+};
+window.driveLogoFallback = function (el) {
+  if (!el) return;
+  const step = parseInt(el.dataset.logoStep || '0', 10) + 1;
+  el.dataset.logoStep = String(step);
+  if (step < window.__DRIVE_LOGO_URLS.length) {
+    el.src = window.__DRIVE_LOGO_URLS[step];
+  } else if (step === window.__DRIVE_LOGO_URLS.length) {
+    window.fetchLogoViaScript().then(function (dataUrl) {
+      if (dataUrl) {
+        el.onerror = null;
+        el.src = dataUrl;
+      } else {
+        el.src = 'logo-fly.png';
+      }
+    });
+  } else if (step === window.__DRIVE_LOGO_URLS.length + 1) {
+    el.src = 'logo.png';
+  } else {
+    el.onerror = null;
+  }
+};
+window.__welcomeVideoPromise = (async function () {
+const vidKey = 'welcome-video-' + window.__DRIVE_VIDEO_ID + '-v2';
+const cacheKey = 'https://gyanova.local/' + vidKey;
+try {
+if ('caches' in window) {
+const cache = await caches.open('gyanova-media-v2');
+const cached = await cache.match(cacheKey);
+if (cached) {
+const blob = await cached.blob();
+if (blob && blob.size > 0) return URL.createObjectURL(blob);
+}
+}
+} catch (e) {}
+const idbGet = () => new Promise((resolve) => {
+try {
+const req = indexedDB.open('gyanova-media-db', 1);
+req.onupgradeneeded = () => req.result.createObjectStore('files');
+req.onsuccess = () => {
+const tx = req.result.transaction('files', 'readonly');
+const get = tx.objectStore('files').get(vidKey);
+get.onsuccess = () => resolve(get.result || null);
+get.onerror = () => resolve(null);
+};
+req.onerror = () => resolve(null);
+} catch (e) { resolve(null); }
+});
+const idbPut = (blob) => {
+try {
+const req = indexedDB.open('gyanova-media-db', 1);
+req.onupgradeneeded = () => req.result.createObjectStore('files');
+req.onsuccess = () => {
+const tx = req.result.transaction('files', 'readwrite');
+tx.objectStore('files').put(blob, vidKey);
+};
+} catch (e) {}
+};
+const idbBlob = await idbGet();
+if (idbBlob && idbBlob.size > 0) return URL.createObjectURL(idbBlob);
+try {
+const ctrl = new AbortController();
+const t = setTimeout(() => ctrl.abort(), 12000);
+const res = await fetch(
+window.__REVIEWS_API + '?action=photo&id=' + encodeURIComponent(window.__DRIVE_VIDEO_ID),
+{ signal: ctrl.signal, priority: 'high' }
+);
+clearTimeout(t);
+const data = await res.json();
+if (data && data.ok && typeof data.data === 'string' && data.data.startsWith('data:')) {
+const blob = await (await fetch(data.data)).blob();
+const url = URL.createObjectURL(blob);
+idbPut(blob);
+try {
+if ('caches' in window) {
+caches.open('gyanova-media-v2').then(c =>
+c.put(cacheKey, new Response(blob, { headers: { 'Content-Type': blob.type || 'video/mp4' } }))
+).catch(() => {});
+}
+} catch (e) {}
+return url;
+}
+} catch (e) {}
+return null;
+})();
+</script>
+<script src="https://cdn.tailwindcss.com">
+
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+brand: {
+navy: '#091c36',
+royal: '#0f3160',
+accentRed: '#c51e23',
+crimson: '#a3161b',
+gold: '#f59e0b',
+goldLight: '#fef3c7',
+surface: '#f8fafc',
+}
+},
+fontFamily: {
+sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+serif: ['Cinzel', 'serif'],
+bengali: ['"Hind Siliguri"', 'sans-serif'],
+}
+}
+}
+}
+</script>
+<style>::-webkit-scrollbar{display:none;}*{-ms-overflow-style:none;scrollbar-width:none;-webkit-tap-highlight-color:transparent;}.gold-gradient-text{background:linear-gradient(135deg,#fbbf24 0%,#d97706 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}@keyframes pulseGlow{0%,100%{opacity:0.45;transform:scale(1);}50%{opacity:0.85;transform:scale(1.08);}}.animate-pulse-glow{animation:pulseGlow 5s infinite ease-in-out;}@keyframes textShine{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}.designer-gradient-title{background:linear-gradient(120deg,#ffffff 15%,#ffd277 45%,#ffffff 60%,#f59e0b 85%);background-size:250% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:textShine 4s linear infinite;}.designer-welcome-text{background:linear-gradient(135deg,#f8fafc 20%,#94a3b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.35em;}@keyframes cursorBlink{0%,100%{opacity:1;}50%{opacity:0;}}.typewriter-cursor{display:inline-block;width:2px;height:1.1em;background-color:#fbbf24;margin-left:2px;vertical-align:-0.15em;animation:cursorBlink 0.75s infinite ease-in-out;}html{scroll-padding-top:76px;}.intro-phase-layer{transition:opacity 1.2s cubic-bezier(0.4,0,0.2,1),transform 1.2s cubic-bezier(0.4,0,0.2,1);will-change:opacity,transform;}.dual-collage-row{overflow-x:auto;overflow-y:hidden;scroll-behavior:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;user-select:none;white-space:nowrap;scrollbar-width:none;}.dual-collage-row::-webkit-scrollbar{display:none;}.dual-collage-row:active{cursor:grabbing;}.dual-collage-row img{pointer-events:none;-webkit-user-drag:none;}.line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}</style>
+</head><body class="bg-slate-100 font-sans text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-navy pb-24"><div id="introSplash" class="fixed inset-0 z-50 flex items-center justify-center text-white px-6 transition-opacity duration-[900ms] overflow-hidden select-none" style="background:#0c0e0f;"><div id="introLoader" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 pointer-events-none opacity-0 transition-opacity duration-300"><div class="w-9 h-9 rounded-full border-2 border-amber-400/25 border-t-amber-400 animate-spin"></div></div><div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(60% 40% at 8% 35%,rgba(60,52,34,.12),transparent 70%),radial-gradient(60% 40% at 96% 55%,rgba(26,40,70,.14),transparent 70%);"></div><div id="introVideoWrap" class="absolute pointer-events-none" style="left:50%;top:4%;transform:translateX(-50%);width:min(100vw,calc(74vh * 0.7341));aspect-ratio:624/850;transition:opacity .3s ease;"><video id="introVideo" autoplay muted playsinline preload="auto" referrerpolicy="no-referrer" class="block w-full h-full"
+style="-webkit-mask-image:linear-gradient(to right,rgba(0,0,0,0.000) 0.0%,rgba(0,0,0,0.043) 3.0%,rgba(0,0,0,0.156) 6.0%,rgba(0,0,0,0.316) 9.0%,rgba(0,0,0,0.500) 12.0%,rgba(0,0,0,0.684) 15.0%,rgba(0,0,0,0.844) 18.0%,rgba(0,0,0,0.957) 21.0%,rgba(0,0,0,1.000) 24.0%,rgba(0,0,0,0.957) 79.0%,rgba(0,0,0,0.844) 82.0%,rgba(0,0,0,0.684) 85.0%,rgba(0,0,0,0.500) 88.0%,rgba(0,0,0,0.316) 91.0%,rgba(0,0,0,0.156) 94.0%,rgba(0,0,0,0.043) 97.0%,rgba(0,0,0,0.000) 100.0%),linear-gradient(to bottom,rgba(0,0,0,0.000) 0.0%,rgba(0,0,0,0.043) 2.5%,rgba(0,0,0,0.156) 5.0%,rgba(0,0,0,0.316) 7.5%,rgba(0,0,0,0.500) 10.0%,rgba(0,0,0,0.684) 12.5%,rgba(0,0,0,0.844) 15.0%,rgba(0,0,0,0.957) 17.5%,rgba(0,0,0,1.000) 20.0%,rgba(0,0,0,0.957) 82.5%,rgba(0,0,0,0.844) 85.0%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.500) 90.0%,rgba(0,0,0,0.316) 92.5%,rgba(0,0,0,0.156) 95.0%,rgba(0,0,0,0.043) 97.5%,rgba(0,0,0,0.000) 100.0%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,rgba(0,0,0,0.000) 0.0%,rgba(0,0,0,0.043) 3.0%,rgba(0,0,0,0.156) 6.0%,rgba(0,0,0,0.316) 9.0%,rgba(0,0,0,0.500) 12.0%,rgba(0,0,0,0.684) 15.0%,rgba(0,0,0,0.844) 18.0%,rgba(0,0,0,0.957) 21.0%,rgba(0,0,0,1.000) 24.0%,rgba(0,0,0,0.957) 79.0%,rgba(0,0,0,0.844) 82.0%,rgba(0,0,0,0.684) 85.0%,rgba(0,0,0,0.500) 88.0%,rgba(0,0,0,0.316) 91.0%,rgba(0,0,0,0.156) 94.0%,rgba(0,0,0,0.043) 97.0%,rgba(0,0,0,0.000) 100.0%),linear-gradient(to bottom,rgba(0,0,0,0.000) 0.0%,rgba(0,0,0,0.043) 2.5%,rgba(0,0,0,0.156) 5.0%,rgba(0,0,0,0.316) 7.5%,rgba(0,0,0,0.500) 10.0%,rgba(0,0,0,0.684) 12.5%,rgba(0,0,0,0.844) 15.0%,rgba(0,0,0,0.957) 17.5%,rgba(0,0,0,1.000) 20.0%,rgba(0,0,0,0.957) 82.5%,rgba(0,0,0,0.844) 85.0%,rgba(0,0,0,0.684) 87.5%,rgba(0,0,0,0.500) 90.0%,rgba(0,0,0,0.316) 92.5%,rgba(0,0,0,0.156) 95.0%,rgba(0,0,0,0.043) 97.5%,rgba(0,0,0,0.000) 100.0%);mask-composite:intersect;"></video></div><div class="absolute inset-x-0 top-0 h-24 pointer-events-none" style="background:linear-gradient(to bottom,#0c0e0f 0%,rgba(12,14,15,0) 100%);"></div><div class="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none" style="background:linear-gradient(to top,#0c0e0f 45%,rgba(12,14,15,0) 100%);"></div><div class="absolute z-10 inset-x-0 bottom-[7%] h-[28%] px-6 w-full max-w-sm mx-auto flex items-center justify-center"><div id="phaseWelcome" class="intro-phase-layer absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 scale-95 pointer-events-none"><p class="text-xs font-semibold uppercase tracking-[0.4em] text-amber-400/90 mb-2">Greetings</p><h2 class="text-4xl font-extrabold designer-welcome-text uppercase tracking-[0.3em] drop-shadow-lg">
+WELCOME
+</h2><div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4 opacity-75"></div></div><div id="phaseBrand" class="intro-phase-layer absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 scale-95 pointer-events-none"><h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-none uppercase drop-shadow-2xl"><span class="designer-gradient-title">GYANOVA</span></h1><h2 class="text-xl sm:text-2xl font-black tracking-[0.35em] text-amber-400 font-serif uppercase mt-1 drop-shadow">
+ACADEMY
+</h2><div class="flex items-center justify-center gap-2 w-48 my-3.5 opacity-80"><div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-amber-400 to-amber-200"></div><i class="fa-solid fa-om text-[10px] text-amber-400"></i><div class="h-[1px] flex-1 bg-gradient-to-l from-transparent via-amber-400 to-amber-200"></div></div><div class="min-h-[32px] flex items-center justify-center"><p class="font-bengali text-lg sm:text-xl font-bold text-amber-200/95 tracking-wide leading-normal"><span id="bengaliTypewriter"></span><span id="typewriterCursor" class="typewriter-cursor"></span></p></div></div></div></div><div class="max-w-md mx-auto min-h-screen bg-slate-100 relative shadow-2xl overflow-x-hidden pb-24">
+<script>
+/* hide header logo until the intro logo lands on it */document.write("<style id=\"hlHide\">#headerLogo{opacity:0}</style>");
+</script>
+<header id="siteHeader" class="fixed top-0 left-1/2 -translate-x-1/2 z-40 bg-brand-navy/95 backdrop-blur-md border-b border-white/10 px-4 py-2 shadow-md w-full max-w-md"><div class="flex items-center justify-between"><div class="flex items-center gap-2.5"><img id="headerLogo" src="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w600" alt="Gyanova Academy Logo" referrerpolicy="no-referrer" class="h-12 w-auto max-w-[60px] object-contain" style="transition:opacity .3s ease;" data-logo-step="0" onerror="driveLogoFallback(this)"></div><div class="flex items-center gap-2"><button onclick="openAdmin()" class="p-2 w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center text-xs active:scale-95 transition" aria-label="Admin login" title="Admin"><i class="fa-solid fa-user-shield"></i></button><button onclick="toggleMobileMenu()" class="p-2 w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center text-xs active:scale-95 transition" aria-label="Toggle navigation menu"><i id="menuIcon" class="fa-solid fa-bars"></i></button></div></div><nav id="mobileNavMenu" class="hidden pt-3 pb-2 border-t border-white/10 mt-2 flex flex-col gap-2 text-xs text-slate-200"><a href="#courses" onclick="toggleMobileMenu()" class="py-1 px-2 rounded hover:bg-white/5 flex items-center justify-between"><span>Classes & Batches</span><i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i></a><a href="#guardians" onclick="toggleMobileMenu()" class="py-1 px-2 rounded hover:bg-white/5 flex items-center justify-between"><span>Message for Guardians</span><i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i></a><a href="#gallery" onclick="toggleMobileMenu()" class="py-1 px-2 rounded hover:bg-white/5 flex items-center justify-between"><span>Campus Tour & Highlights</span><i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i></a><a href="#reviews" onclick="toggleMobileMenu()" class="py-1 px-2 rounded hover:bg-white/5 flex items-center justify-between"><span>Student & Guardian Reviews</span><i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i></a><a href="#contact" onclick="toggleMobileMenu()" class="py-1 px-2 rounded hover:bg-white/5 flex items-center justify-between"><span>Center Location & Contact</span><i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i></a></nav></header><div id="headerSpacer" class="h-[65px]"></div><section class="bg-gradient-to-b from-brand-navy via-brand-royal to-slate-900 text-white pt-6 pb-8 px-4 rounded-b-[2rem] shadow-xl relative overflow-hidden"><div class="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div><div class="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 bg-brand-accentRed/20 rounded-full blur-2xl pointer-events-none"></div><div class="text-center mb-3"><span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-amber-400/30 text-amber-300 text-xs font-bengali font-semibold shadow-inner"><span>✦</span> “যা বিদ্যা সা বিমুক্তয়ে ” <span>✦</span></span></div><div class="text-center"><h1 class="text-3xl font-extrabold tracking-tight leading-tight">
+GYANOVA <span class="text-amber-400">ACADEMY</span></h1><p class="text-xs uppercase tracking-widest text-slate-300 font-semibold mt-1">
+Empowering Students for Academic Excellence
+</p></div><div class="grid grid-cols-2 gap-2 mt-4 max-w-sm mx-auto"><div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-2.5 flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-landmark text-sm"></i></div><div><span class="text-[9px] text-slate-300 block leading-tight font-medium">Secondary Board</span><span class="text-[11px] font-bold text-white leading-tight">WBBSE <br>(Class 5-10) </span></div></div><div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-2.5 flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-brand-accentRed/30 text-red-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-graduation-cap text-sm"></i></div><div><span class="text-[9px] text-slate-300 block leading-tight font-medium">Higher Secondary</span><span class="text-[11px] font-bold text-white leading-tight">WBCHSE <br>(Class 11 & 12)</span></div></div></div><div class="mt-5 bg-gradient-to-r from-brand-accentRed via-red-600 to-amber-600 p-0.5 rounded-2xl shadow-lg shadow-red-900/40 animate-pulse"><div class="bg-brand-navy/95 rounded-[14px] p-3 text-center"><div class="flex items-center justify-center gap-2"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span></span><span class="text-sm font-extrabold tracking-wider text-amber-400 uppercase">ADMISSIONS OPEN</span></div><p class="text-[11px] text-slate-200 mt-0.5 font-medium">New Batches Starting Soon • <span class="text-amber-300 font-bold">Limited Seats Available!</span></p></div></div></section><section id="courses" class="px-4 -mt-4 relative z-20"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div class="relative overflow-hidden rounded-2xl p-4 shadow-xl flex flex-col justify-between border border-amber-300/30" style="background:linear-gradient(155deg,#091c36 0%,#0f3160 100%);"><div class="absolute inset-x-0 top-0 h-1" style="background:linear-gradient(90deg,#b45309,#fbbf24,#fde68a,#fbbf24,#b45309);"></div><div class="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(251,191,36,.22) 0%,transparent 70%);"></div><div class="relative z-10"><div class="flex items-center justify-between mb-2 mt-1"><span class="inline-block px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wide bg-amber-400/15 text-amber-300 border border-amber-300/40 rounded-md">
+Secondary Foundation
+</span><span class="text-[10px] font-bold text-slate-300">WBBSE Board</span></div><h3 class="text-xl font-black text-white leading-tight">
+CLASSES <span class="text-2xl font-extrabold" style="background:linear-gradient(90deg,#fbbf24,#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent;">5 to 10</span></h3><div class="mt-2.5"><span class="text-[10px] font-bold uppercase tracking-wider text-slate-300 block mb-1.5 flex items-center gap-1"><i class="fa-solid fa-book-open text-amber-300 text-[10px]"></i> Subjects Taught:
+</span><div class="flex flex-wrap gap-1.5"><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Bengali</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">English</span><span class="px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-200 text-[11px] font-bold border border-amber-300/40">Mathematics</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Physical Science</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Life Science</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">History</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Geography</span><span class="px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-200 text-[11px] font-bold border border-amber-300/40">Computer</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Hindi</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Sanskrit</span></div></div></div><button onclick="openInquiryModal('5-10')" class="mt-3.5 w-full py-2 px-3 rounded-xl text-xs font-extrabold active:scale-95 transition flex items-center justify-center gap-1.5 shadow-lg text-[#091c36]" style="background:linear-gradient(90deg,#f59e0b,#fcd34d,#f59e0b);"><span>Inquire for Class 5 – 10</span><i class="fa-solid fa-arrow-right text-[10px]"></i></button></div><div class="relative overflow-hidden rounded-2xl p-4 shadow-xl flex flex-col justify-between border border-amber-300/30" style="background:linear-gradient(155deg,#17163f 0%,#2b2a73 100%);"><div class="absolute inset-x-0 top-0 h-1" style="background:linear-gradient(90deg,#b45309,#fbbf24,#fde68a,#fbbf24,#b45309);"></div><div class="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(251,191,36,.22) 0%,transparent 70%);"></div><div class="relative z-10"><div class="flex items-center justify-between mb-2 mt-1"><span class="inline-block px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wide bg-amber-400/15 text-amber-300 border border-amber-300/40 rounded-md">
+Higher Secondary
+</span><span class="text-[10px] font-bold text-slate-300">WBCHSE Board</span></div><h3 class="text-xl font-black text-white leading-tight">
+CLASSES <span class="text-2xl font-extrabold" style="background:linear-gradient(90deg,#fbbf24,#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent;">11 &amp; 12</span></h3><div class="mt-2.5"><span class="text-[10px] font-bold uppercase tracking-wider text-slate-300 block mb-1.5 flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-300 text-[10px]"></i> Subjects Taught:
+</span><div class="flex flex-wrap gap-1.5"><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">English</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Bengali</span><span class="px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-200 text-[11px] font-bold border border-amber-300/40">Political Science</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">History</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Education</span><span class="px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-200 text-[11px] font-bold border border-amber-300/40">Computer Science</span><span class="px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-200 text-[11px] font-bold border border-amber-300/40">Computer Application</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">ENVS</span><span class="px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[11px] font-semibold border border-white/15">Geography</span></div></div></div><button onclick="openInquiryModal('11-12')" class="mt-3.5 w-full py-2 px-3 rounded-xl text-xs font-extrabold active:scale-95 transition flex items-center justify-center gap-1.5 shadow-lg text-[#091c36]" style="background:linear-gradient(90deg,#f59e0b,#fcd34d,#f59e0b);"><span>Inquire for Class 11 – 12</span><i class="fa-solid fa-arrow-right text-[10px]"></i></button></div></div></section><section class="px-4 mt-6"><div class="text-center mb-3"><h2 class="text-xs uppercase font-extrabold tracking-widest text-brand-accentRed">Why Choose Gyanova</h2><p class="text-lg font-extrabold text-slate-800">Our Key Teaching Pillars</p></div><div class="grid grid-cols-2 gap-2.5"><div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200/80 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 text-base"><i class="fa-solid fa-clipboard-check"></i></div><div><h4 class="text-xs font-bold text-slate-800 leading-tight">Monthly Exam</h4><p class="text-[10px] text-slate-500">Regular assessment</p></div></div><div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200/80 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 text-base"><i class="fa-solid fa-desktop"></i></div><div><h4 class="text-xs font-bold text-slate-800 leading-tight">Computer Studies</h4><p class="text-[10px] text-slate-500">Digital literacy & skills</p></div></div><div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200/80 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 text-base"><i class="fa-solid fa-chalkboard-user"></i></div><div><h4 class="text-xs font-bold text-slate-800 leading-tight">Experienced Faculty</h4><p class="text-[10px] text-slate-500">Board exam specialists</p></div></div><div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200/80 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 text-base"><i class="fa-solid fa-user-check"></i></div><div><h4 class="text-xs font-bold text-slate-800 leading-tight">Personal Attention</h4><p class="text-[10px] text-slate-500">Small batch care</p></div></div><div class="col-span-2 bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-2xl border border-amber-200 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 text-base shadow-sm"><i class="fa-regular fa-lightbulb"></i></div><div class="flex-1"><div class="flex items-center justify-between"><h4 class="text-xs font-bold text-slate-900 leading-tight">Doubt Clearing Sessions</h4><span class="text-[9px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">Free</span></div><p class="text-[10px] text-slate-600 mt-0.5">Extra dedicated hours so no student is left behind.</p></div></div></div></section><section id="guardians" class="px-4 mt-8"><div class="bg-gradient-to-br from-slate-900 via-brand-navy to-slate-900 rounded-3xl p-5 text-white shadow-xl relative overflow-hidden"><div class="absolute -right-10 -bottom-10 w-36 h-36 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div><div class="flex items-center gap-2 mb-3"><span class="w-7 h-7 rounded-lg bg-amber-400 text-brand-navy flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-hand-holding-heart"></i></span><div><span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Guardian Commitment</span><h3 class="text-base font-extrabold text-white">অভিভাবকদের উদ্দেশ্যে আমাদের বার্তা</h3></div></div><div class="space-y-3 font-bengali"><div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex items-start gap-2.5"><span class="text-amber-400 text-sm mt-0.5">✦</span><div><h4 class="text-xs font-bold text-amber-300">আমাদের অঙ্গীকার</h4><p class="text-xs text-slate-200 leading-relaxed mt-1">
+আমরা নিশ্চিত করি যে প্রতিটি অভিভাবক যেন তাদের সন্তানের সার্বিক অগ্রগতি, একাডেমিক শৃঙ্খলা এবং ভবিষ্যতের মাইলফলক সম্পর্কে আত্মবিশ্বাসী বোধ করেন।
+</p></div></div><div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex items-start gap-2.5"><span class="text-amber-400 text-sm mt-0.5">✦</span><div><h4 class="text-xs font-bold text-amber-300">সুপ্ত মেধা ও সৃজনশীলতার বিকাশ</h4><p class="text-xs text-slate-200 leading-relaxed mt-1">
+উন্নত শিক্ষণ পদ্ধতি ও ধারাবাহিক মূল্যায়নের মাধ্যমে শিক্ষার্থীদের সুপ্ত মেধা ও সৃজনশীলতার বিকাশ ঘটাতে এবং তাদের প্রাতিষ্ঠানিক উৎকর্ষ নিশ্চিতকরণের পাশাপাশি একটি সুদৃঢ় শিক্ষাগত ভিত্তি তৈরিতে সম্পূর্ণ প্রতিশ্রুতিবদ্ধ।
+</p></div></div><div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex items-start gap-2.5"><span class="text-amber-400 text-sm mt-0.5">✦</span><div><h4 class="text-xs font-bold text-amber-300">অভিজ্ঞ শিক্ষক মণ্ডলী</h4><p class="text-xs text-slate-200 leading-relaxed mt-1">
+আমাদের এখানে অভিজ্ঞ শিক্ষক মণ্ডলীর তত্ত্বাবধানে পঞ্চম থেকে দ্বাদশ শ্রেণী পর্যন্ত সমস্ত বিষয়ের যত্নসহকারে পঠন-পাঠন করানো হয়।
+</p></div></div><div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex items-start gap-2.5"><span class="text-amber-400 text-sm mt-0.5">✦</span><div><h4 class="text-xs font-bold text-amber-300">নিয়মিত পরীক্ষা ও বিশেষ যত্ন</h4><p class="text-xs text-slate-200 leading-relaxed mt-1">
+ছাত্র-ছাত্রীদের উজ্জ্বল ভবিষ্যৎ গড়ে তুলতে আমরা নিয়মিত পরীক্ষা এবং প্রতিটি শিক্ষার্থীর প্রতি বিশেষ মনোযোগ দিয়ে থাকি।
+</p></div></div></div></div></section><section id="gallery" class="mt-8"><div class="px-4 mb-3"><h2 class="text-xs uppercase font-extrabold tracking-widest text-brand-accentRed">Campus Gallery</h2><p class="text-lg font-extrabold text-slate-800">Institute Life & Activities</p></div><p id="galleryEmpty" class="px-4 py-6 text-xs text-slate-500 text-center">Loading photos…</p><div class="flex flex-col gap-2.5 overflow-hidden"><div id="collageRow1" class="dual-collage-row px-4 py-0.5 hidden"><div id="trackRow1" class="flex items-center gap-2.5 shrink-0 w-max"></div></div><div id="collageRow2" class="dual-collage-row px-4 py-0.5 hidden"><div id="trackRow2" class="flex items-center gap-2.5 shrink-0 w-max"></div></div></div></section><div id="imageLightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4 hidden transition-opacity"><button onclick="closeLightbox()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/20 text-white flex items-center justify-center text-sm z-20 hover:bg-white/30"><i class="fa-solid fa-xmark"></i></button><div class="max-w-md w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10"><div class="relative w-full h-72 bg-black flex items-center justify-center"><img id="lightboxImg" src="" alt="Institute Photo" class="max-h-full max-w-full object-contain"></div><div class="p-4 bg-slate-900 text-white"><span id="lightboxTag" class="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Tag</span><h3 id="lightboxTitle" class="text-sm font-bold mt-1 text-white">Title</h3><p id="lightboxDesc" class="text-xs text-slate-300 mt-0.5 leading-snug">Description</p></div></div></div><section id="reviews" class="px-4 mt-8"><div class="flex items-center justify-between mb-3"><div><h2 class="text-xs uppercase font-extrabold tracking-widest text-brand-accentRed">Real Testimonials</h2><p class="text-lg font-extrabold text-slate-800">Student & Guardian Reviews</p></div><button onclick="toggleReviewModal()" class="text-xs bg-brand-royal text-white font-bold px-3 py-1.5 rounded-xl shadow active:scale-95 transition flex items-center gap-1"><i class="fa-solid fa-pen-to-square text-[10px]"></i> Add Review
+</button></div><div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200/80 mb-3 flex items-center justify-between"><div class="flex items-center gap-2.5"><div id="ratingAvg" class="text-2xl font-black text-slate-900 leading-none">–</div><div><div id="ratingStars" class="flex text-amber-400 text-xs" aria-label="Average rating"><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><span id="ratingCount" class="text-[10px] text-slate-500 font-medium">Loading reviews…</span></div></div><span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+100% Verified
+</span></div><div class="relative overflow-hidden rounded-2xl"><div id="reviewsPagesTrack" class="flex transition-transform duration-500 ease-out will-change-transform" style="transform: translateX(0%);"></div></div><div id="reviewFocusModal" onclick="closeReviewFocusModal(event)" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity"><div id="reviewFocusCard" class="bg-white rounded-2xl p-5 shadow-2xl max-w-sm w-full border border-slate-200 transition-all transform scale-95" onclick="event.stopPropagation()"><div class="flex items-start justify-between pb-3 border-b border-slate-100"><div class="flex items-center gap-2.5"><div id="focusAvatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+U
+</div><div><div class="flex items-center gap-1.5"><h4 id="focusName" class="text-xs font-extrabold text-slate-900">Name</h4><span id="focusRoleBadge" class="text-[9px] px-1.5 py-0.2 rounded font-semibold">Role</span></div><p id="focusBatch" class="text-[10px] text-slate-500 font-medium">Batch</p></div></div><div id="focusStars" class="flex text-amber-400 text-xs"></div></div><div class="mt-3 bg-slate-50 p-3 rounded-xl border border-slate-100/90 max-h-60 overflow-y-auto"><p id="focusComment" class="text-xs text-slate-700 leading-relaxed font-normal whitespace-pre-line"></p></div><button onclick="closeReviewFocusModal()" class="mt-4 w-full py-2 bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">
+Close
+</button></div></div><div id="reviewsPaginationContainer" class="flex flex-col items-center justify-center gap-2 mt-3.5"><div id="reviewsBubbles" class="flex items-center justify-center gap-1.5"></div></div></section><section id="contact" class="px-4 mt-8"><div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80"><div class="text-center mb-4"><span class="text-xs font-bold text-brand-accentRed uppercase tracking-wider">Our Learning Centers</span><h3 class="text-xl font-extrabold text-slate-900">Visit Gyanova Academy</h3></div><div class="rounded-2xl border border-slate-200/80 bg-slate-100/70 p-2 sm:p-2.5"><div class="grid grid-cols-2 gap-1.5 p-1 mb-2.5 bg-slate-200/60 rounded-xl text-xs font-bold"><button id="centerTab0" onclick="switchCenterSlide(0)" class="py-2.5 px-2 rounded-xl bg-[#091c36] text-white shadow-sm transition-all flex items-center justify-center gap-1.5 text-center leading-tight"><i class="fa-solid fa-location-dot text-amber-400 text-xs shrink-0"></i><span class="text-[11px] font-bold">Center 1<br>(Boardghar)</span></button><button id="centerTab1" onclick="switchCenterSlide(1)" class="py-2.5 px-2 rounded-xl text-slate-700 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5 text-center leading-tight"><i class="fa-solid fa-train text-blue-600 text-xs shrink-0"></i><span class="text-[11px] font-semibold">Center 2<br>(Madhyamgram)</span></button></div><div class="overflow-hidden rounded-2xl"><div id="centersCarouselTrack" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);"><div class="w-full shrink-0 p-4 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between"><div><div class="flex items-center justify-between gap-2 mb-2.5"><span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-red-50 text-brand-crimson border border-red-200/80 shadow-2xs"><i class="fa-solid fa-star text-[10px] text-amber-500"></i> Main Campus 
+</span></div><h4 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight">
+Center 1: Boardghar
+</h4><p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+16 Feet Road, Boardghar, Jugberia
+</p></div><div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3"><span class="text-xs text-slate-600 font-medium leading-tight">
+View on Maps
+</span><a href="https://maps.app.goo.gl/eUfKoWCEZxB9qgnC7?g_st=aw" 
+target="_blank" 
+rel="noopener noreferrer"
+class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0d346b] to-[#1d4ed8] hover:from-[#091c36] hover:to-[#1e40af] text-white font-bold text-xs shadow-md shadow-blue-900/20 active:scale-95 transition shrink-0"><i class="fa-solid fa-map-location-dot text-amber-300 text-xs"></i><span>View in Map</span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-blue-200"></i></a></div></div><div class="w-full shrink-0 p-4 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between"><div><div class="flex items-center justify-between gap-2 mb-2.5"><span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200/80 shadow-2xs"><i class="fa-solid fa-building-columns text-[10px] text-blue-600"></i> Annex Campus
+</span></div><h4 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight">
+Center 2: Madhyamgram Station Road
+</h4><p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+Near Madhyamgram Railway Station, 30 Bus Stand, Bireshpally, Madhyamgram, Kolkata - 700129. 
+</p></div><div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3"><span class="text-xs text-slate-600 font-medium leading-tight">
+View on Maps
+</span><a href="https://maps.app.goo.gl/KzSvvwYQ4JpyUEwK6?g_st=aw" 
+target="_blank" 
+rel="noopener noreferrer"
+class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0d346b] to-[#1d4ed8] hover:from-[#091c36] hover:to-[#1e40af] text-white font-bold text-xs shadow-md shadow-blue-900/20 active:scale-95 transition shrink-0"><i class="fa-solid fa-map-location-dot text-amber-300 text-xs"></i><span>View in Map</span><i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-blue-200"></i></a></div></div></div></div></div><div class="grid grid-cols-1 gap-2.5 mt-3.5"><a href="tel:+919163621264" class="flex items-center justify-between p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-950 active:scale-95 transition"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-phone"></i></div><div><span class="text-[10px] text-blue-700 block font-medium">Primary Admission Desk</span><span class="text-xs font-bold">+91 91636 21264</span></div></div><span class="text-[10px] bg-blue-600 text-white font-bold px-2.5 py-1 rounded-md">Call</span></a><a href="tel:+919330233178" class="flex items-center justify-between p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 active:scale-95 transition"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-phone-volume"></i></div><div><span class="text-[10px] text-amber-700 block font-medium">Helpline & Guardian Support</span><span class="text-xs font-bold">+91 93302 33178</span></div></div><span class="text-[10px] bg-amber-600 text-white font-bold px-2.5 py-1 rounded-md">Call</span></a></div><div class="mt-4 text-center"><p class="text-xs font-bold text-slate-600 mb-2.5">Follow us on</p><div class="flex items-center justify-center gap-4"><a href="https://www.facebook.com/share/1HE2hvkg44/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+class="w-12 h-12 rounded-full bg-[#1877F2] hover:bg-[#145dbf] text-white flex items-center justify-center text-xl shadow-md active:scale-95 transition"><i class="fa-brands fa-facebook-f"></i></a><a href="https://www.instagram.com/academygyanova?jplx=MWIzd3FsYWd4bWRuaw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#f58529] via-[#dd2a7b] to-[#8134af] text-white flex items-center justify-center text-xl shadow-md active:scale-95 transition"><i class="fa-brands fa-instagram"></i></a></div></div></div></section><div class="fixed bottom-0 left-0 right-0 z-40 flex justify-center pointer-events-none"><div class="w-full max-w-md bg-white/95 backdrop-blur-lg border-t border-slate-200 py-2.5 px-4 shadow-[0_-4px_15px_rgba(0,0,0,0.08)] flex items-center gap-2.5 pointer-events-auto"><a href="tel:+919163621264" class="flex-1 py-2.5 px-3 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 transition"><i class="fa-solid fa-phone text-amber-400"></i><span>Call Now</span></a><button onclick="openInquiryModal('all')" class="flex-1 py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20 active:scale-95 transition"><i class="fa-brands fa-whatsapp text-sm"></i><span>Enquire Now</span></button></div></div></div><div id="reviewModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-bottom duration-300"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><h3 class="text-sm font-extrabold text-slate-900">Write a Review</h3><p class="text-[11px] text-slate-500">Share your experience at Gyanova Academy</p></div><button onclick="toggleReviewModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form id="reviewForm" onsubmit="submitReview(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">I am a</label><div class="grid grid-cols-2 gap-2"><label class="flex items-center justify-center gap-1.5 p-2 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer has-[:checked]:border-brand-royal has-[:checked]:bg-blue-50 has-[:checked]:text-brand-royal"><input type="radio" name="reviewerType" value="Student" checked class="hidden"><i class="fa-solid fa-user-graduate text-xs"></i> Student
+</label><label class="flex items-center justify-center gap-1.5 p-2 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer has-[:checked]:border-brand-royal has-[:checked]:bg-blue-50 has-[:checked]:text-brand-royal"><input type="radio" name="reviewerType" value="Guardian" class="hidden"><i class="fa-solid fa-users text-xs"></i> Guardian
+</label></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Your Name</label><input type="text" id="reviewerName" required placeholder="e.g. Rahul Das / Anjali Sen" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Class / Stream</label><select id="reviewerClass" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white"><option value="Class 5 (Primary)">Class 5</option><option value="Class 6 (Foundation)">Class 6</option><option value="Class 7 (Foundation)">Class 7</option><option value="Class 8 (Foundation)">Class 8</option><option value="Class 9 (Secondary)">Class 9</option><option value="Class 10 (Madhyamik Batch)">Class 10</option><option value="Class 11 (WBCHSE)">Class 11</option><option value="Class 12 (WBCHSE)">Class 12</option></select></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Your Rating</label><div class="flex items-center gap-2 text-2xl text-amber-400" id="starSelector"><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(1)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(2)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(3)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(4)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(5)"></i></div><input type="hidden" id="selectedRating" value="0"></div><div><div class="flex items-center justify-between mb-1"><label class="block text-[11px] font-bold text-slate-700">Review Feedback</label></div><textarea id="reviewerComment" required rows="3" placeholder="Share your experience..." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></div><button type="submit" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">
+Submit Review
+</button></form></div></div><div id="adminModal" class="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Academy</span><h3 class="text-sm font-extrabold text-slate-900">Admin Panel</h3></div><div class="flex items-center gap-2"><button id="adminLogoutBtn" onclick="adminLogout()" class="hidden text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 active:scale-95">Logout</button><button onclick="closeAdmin()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div></div><form id="adminLoginView" onsubmit="adminLogin(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Admin ID</label><input type="text" id="adminUser" required autocomplete="username" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Password</label><input type="password" id="adminPass" required autocomplete="current-password" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><p id="adminLoginError" class="hidden text-[11px] text-red-600 font-semibold"></p><button type="submit" id="adminLoginBtn" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Login</button></form><div id="adminPanelView" class="hidden mt-4"><div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl text-xs font-bold mb-3"><button id="adminTabReviews" onclick="adminTab('reviews')" class="py-2 rounded-lg transition">Reviews</button><button id="adminTabPhotos" onclick="adminTab('photos')" class="py-2 rounded-lg transition">Photos</button></div><div id="adminReviewsPane"><div id="adminReviewsList" class="space-y-2"></div></div><div id="adminPhotosPane" class="hidden"><div class="rounded-2xl border border-dashed border-slate-300 p-3 bg-slate-50 space-y-2"><label class="block text-[11px] font-bold text-slate-700">Upload photos to the Institute Gallery</label><input type="file" id="adminFiles" accept="image/*" multiple class="block w-full text-[11px] text-slate-600"><input type="text" id="adminCaption" maxlength="100" placeholder="Caption (optional)" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white"><button id="adminUploadBtn" onclick="adminUpload()" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Upload</button><p id="adminUploadStatus" class="text-[11px] text-slate-500"></p></div><div id="adminPhotosGrid" class="grid grid-cols-3 gap-2 mt-3"></div></div></div></div></div><div id="inquiryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-bottom duration-300"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Admissions</span><h3 class="text-sm font-extrabold text-slate-900">Direct Admission Desk</h3></div><button onclick="closeInquiryModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="handleInquirySubmit(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Student / Guardian Name</label><b><input type="text" id="inqName" required placeholder="Enter full name" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></b></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Target Class / Program</label><div class="relative"><select id="inqProgram" required class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white font-medium text-slate-700 appearance-none pr-8"></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fa-solid fa-chevron-down text-[10px]"></i></div></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Message or Query (Optional)</label><b><textarea id="inqMessage" rows="2" placeholder="Fee details, batch timing, etc." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></b></div><button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 active:scale-98 transition"><i class="fa-brands fa-whatsapp text-sm"></i> Send Instant Inquiry via WhatsApp
+</button></form></div></div><div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-lg border border-slate-700 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300"><i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toastMsg">Review recorded successfully!</span></div>
+<script>
+const DRIVE_WELCOME_VIDEO_ID = window.__DRIVE_VIDEO_ID;
+const DRIVE_LOGO_ID = window.__DRIVE_LOGO_ID;
+const DRIVE_LOGO_URLS = window.__DRIVE_LOGO_URLS;
+function dataUriToBlobUrl(dataUri, fallbackMime) {
+const parts = String(dataUri).split(',');
+if (parts.length < 2) return null;
+const mimeMatch = parts[0].match(/data:([^;]+);/i);
+const mime = (mimeMatch && mimeMatch[1]) || fallbackMime || 'video/mp4';
+const bin = atob(parts[1]);
+const bytes = new Uint8Array(bin.length);
+for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+return URL.createObjectURL(new Blob([bytes], { type: mime }));
+}
+let introLoaderShowTimer = setTimeout(() => {
+const loader = document.getElementById('introLoader');
+if (loader && !introTextStarted && !introSkipped) loader.style.opacity = '1';
+}, 450);
+function hideIntroLoader() {
+clearTimeout(introLoaderShowTimer);
+const loader = document.getElementById('introLoader');
+if (loader) {
+loader.style.opacity = '0';
+setTimeout(() => loader.remove(), 300);
+}
+}
+async function loadWelcomeVideoFromDrive(videoEl) {
+const tryPlayUrl = (url) => new Promise((resolve) => {
+let settled = false;
+const done = (ok) => {
+if (settled) return;
+settled = true;
+videoEl.removeEventListener('loadeddata', onReady);
+videoEl.removeEventListener('canplay', onReady);
+videoEl.removeEventListener('error', onErr);
+clearTimeout(timer);
+resolve(ok);
+};
+const onReady = () => {
+const p = videoEl.play();
+if (p && typeof p.catch === 'function') p.catch(() => {});
+done(true);
+};
+const onErr = () => done(false);
+const timer = setTimeout(() => done(false), 3000);
+videoEl.addEventListener('loadeddata', onReady, { once: true });
+videoEl.addEventListener('canplay', onReady, { once: true });
+videoEl.addEventListener('error', onErr, { once: true });
+videoEl.src = url;
+videoEl.load();
+});
+try {
+const prefetchedUrl = await window.__welcomeVideoPromise;
+if (prefetchedUrl && await tryPlayUrl(prefetchedUrl)) {
+hideIntroLoader();
+return true;
+}
+} catch (e) {}
+const directUrls = [
+`https://drive.usercontent.google.com/download?id=${DRIVE_WELCOME_VIDEO_ID}&export=download&confirm=t`,
+`https://drive.google.com/uc?export=download&id=${DRIVE_WELCOME_VIDEO_ID}`
+];
+for (const u of directUrls) {
+if (await tryPlayUrl(u)) {
+hideIntroLoader();
+return true;
+}
+}
+hideIntroLoader();
+return false;
+}
+let introSkipped = false;
+const sloganBengali = "যা বিদ্যা সা বিমুক্তয়ে ";
+let introTextStarted = false;
+function startIntroTextSequence() {
+if (introTextStarted || introSkipped) return;
+introTextStarted = true;
+hideIntroLoader();
+if (typeof window.__startBackgroundDataLoads === 'function') {
+window.__startBackgroundDataLoads();
+}
+const phaseWelcome = document.getElementById('phaseWelcome');
+const phaseBrand = document.getElementById('phaseBrand');
+setTimeout(() => {
+if (introSkipped || !phaseWelcome) return;
+phaseWelcome.classList.remove('opacity-0', 'scale-95');
+phaseWelcome.classList.add('opacity-100', 'scale-100');
+}, 250);
+setTimeout(() => {
+if (introSkipped || !phaseWelcome || !phaseBrand) return;
+phaseWelcome.style.transition = 'opacity .45s ease, transform .45s ease';
+phaseWelcome.classList.remove('opacity-100', 'scale-100');
+phaseWelcome.classList.add('opacity-0', 'scale-105');
+phaseBrand.style.transition = 'opacity .9s ease .4s, transform .9s ease .4s';
+phaseBrand.classList.remove('opacity-0', 'scale-95');
+phaseBrand.classList.add('opacity-100', 'scale-100');
+setTimeout(startBengaliTypewriter, 900);
+}, 2300);
+}
+window.addEventListener('DOMContentLoaded', () => {
+const hlInit = document.getElementById('headerLogo');
+if (hlInit && hlInit.complete && hlInit.naturalWidth === 0) {
+window.driveLogoFallback(hlInit);
+}
+const preloadLogo = new Image();
+preloadLogo.referrerPolicy = 'no-referrer';
+preloadLogo.src = DRIVE_LOGO_URLS[0];
+const introVideo = document.getElementById('introVideo');
+let introSafetyTimer = setTimeout(() => {
+if (!introSkipped && !window.__logoFlying) flyLogoToHeader();
+}, 12000);
+if (introVideo) {
+introVideo.addEventListener('playing', () => {
+startIntroTextSequence();
+clearTimeout(introSafetyTimer);
+const durMs = (introVideo.duration && isFinite(introVideo.duration))
+? Math.ceil(introVideo.duration * 1000) + 2000
+: 12000;
+introSafetyTimer = setTimeout(() => {
+if (!introSkipped && !window.__logoFlying) flyLogoToHeader();
+}, durMs);
+}, { once: true });
+introVideo.addEventListener('ended', () => {
+clearTimeout(introSafetyTimer);
+setTimeout(() => { if (!introSkipped) flyLogoToHeader(); }, 500);
+});
+loadWelcomeVideoFromDrive(introVideo).then((loaded) => {
+if (!loaded && !introTextStarted && !introSkipped) {
+startIntroTextSequence();
+clearTimeout(introSafetyTimer);
+introSafetyTimer = setTimeout(() => {
+if (!introSkipped && !window.__logoFlying) flyLogoToHeader();
+}, 6500);
+}
+});
+} else {
+startIntroTextSequence();
+}
+});
+function startBengaliTypewriter() {
+if (introSkipped) return;
+const targetElement = document.getElementById('bengaliTypewriter');
+const cursor = document.getElementById('typewriterCursor');
+if (!targetElement) return;
+const characters = Array.from(sloganBengali);
+let charIndex = 0;
+const typeInterval = setInterval(() => {
+if (introSkipped || charIndex >= characters.length) {
+clearInterval(typeInterval);
+setTimeout(() => {
+if (cursor) cursor.style.display = 'none';
+}, 1000);
+return;
+}
+targetElement.textContent += characters[charIndex];
+charIndex++;
+}, 85);
+}
+function revealHeaderLogo() {
+const st = document.getElementById('hlHide');
+if (st) st.remove();
+const hl = document.getElementById('headerLogo');
+if (hl) hl.style.opacity = '1';
+}
+const VIDEO_LOGO = { x: 140, y: 198, w: 354, h: 466 };
+function flyLogoToHeader() {
+if (window.__logoFlying || introSkipped) return;
+const hl = document.getElementById('headerLogo');
+const r = hl ? hl.getBoundingClientRect() : null;
+if (!r || !r.width || !r.height) { skipIntro(); return; }
+window.__logoFlying = true;
+let st;
+const v = document.getElementById('introVideo');
+if (v && v.videoWidth) {
+const vr = v.getBoundingClientRect();
+const k = Math.min(vr.width / v.videoWidth, vr.height / v.videoHeight);
+const offX = vr.left + (vr.width - v.videoWidth * k) / 2;
+const offY = vr.top + (vr.height - v.videoHeight * k) / 2;
+st = { l: offX + VIDEO_LOGO.x * k, t: offY + VIDEO_LOGO.y * k, w: VIDEO_LOGO.w * k, h: VIDEO_LOGO.h * k };
+} else {
+const h = Math.min(260, window.innerHeight * 0.3);
+st = { l: (window.innerWidth - h * VIDEO_LOGO.w / VIDEO_LOGO.h) / 2, t: window.innerHeight * 0.22, w: h * VIDEO_LOGO.w / VIDEO_LOGO.h, h };
+}
+const fly = document.createElement('img');
+fly.referrerPolicy = 'no-referrer';
+fly.dataset.logoStep = hl && hl.dataset.logoStep ? hl.dataset.logoStep : '0';
+fly.src = (hl && hl.complete && hl.naturalWidth > 0 && hl.currentSrc) ? hl.currentSrc : DRIVE_LOGO_URLS[0];
+fly.alt = '';
+fly.style.cssText = 'position:fixed;z-index:60;left:' + st.l + 'px;top:' + st.t + 'px;width:' + st.w + 'px;height:' + st.h + 'px;' +
+'object-fit:contain;pointer-events:none;transform-origin:center center;will-change:transform;backface-visibility:hidden;transform:translate3d(0,0,0) scale(1);';
+document.body.appendChild(fly);
+const dx = (r.left + r.width / 2) - (st.l + st.w / 2);
+const dy = (r.top + r.height / 2) - (st.t + st.h / 2);
+const sc = Math.min(r.width / st.w, r.height / st.h);
+const go = () => {
+requestAnimationFrame(() => requestAnimationFrame(() => {
+const wrap = document.getElementById('introVideoWrap');
+if (wrap) wrap.style.opacity = '0';
+if (v) { try { v.pause(); } catch (e) {} }
+['phaseWelcome', 'phaseBrand'].forEach(id => {
+const el = document.getElementById(id);
+if (el) { el.style.transition = 'opacity .35s ease'; el.style.opacity = '0'; }
+});
+fly.style.transition = 'transform 1.3s cubic-bezier(.45,0,.2,1)';
+fly.style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0) scale(' + sc + ')';
+setTimeout(skipIntro, 200);
+}));
+};
+if (fly.complete && fly.naturalWidth > 0) go(); else {
+fly.onload = go;
+fly.onerror = () => {
+const next = parseInt(fly.dataset.logoStep || '0', 10) + 1;
+if (next < DRIVE_LOGO_URLS.length) {
+fly.dataset.logoStep = String(next);
+fly.src = DRIVE_LOGO_URLS[next];
+} else if (next === DRIVE_LOGO_URLS.length) {
+fly.dataset.logoStep = String(next);
+fetchLogoViaScript().then((dataUrl) => {
+if (dataUrl) {
+fly.src = dataUrl;
+} else {
+fly.remove();
+window.__logoFlying = false;
+skipIntro();
+}
+});
+} else {
+fly.remove();
+window.__logoFlying = false;
+skipIntro();
+}
+};
+}
+setTimeout(() => { revealHeaderLogo(); }, 1650);
+setTimeout(() => { fly.remove(); window.__logoFlying = false; }, 2000);
+}
+function skipIntro() {
+introSkipped = true;
+const splash = document.getElementById('introSplash');
+if (splash) {
+splash.classList.add('opacity-0', 'pointer-events-none');
+setTimeout(() => splash.remove(), 1000);
+if (!window.__logoFlying) revealHeaderLogo();
+}
+}
+function toggleMobileMenu() {
+const menu = document.getElementById('mobileNavMenu');
+const icon = document.getElementById('menuIcon');
+menu.classList.toggle('hidden');
+if (menu.classList.contains('hidden')) {
+icon.classList.remove('fa-xmark');
+icon.classList.add('fa-bars');
+} else {
+icon.classList.remove('fa-bars');
+icon.classList.add('fa-xmark');
+}
+}
+let wasDraggingCollage = false;
+function handleCollageItemClick(e, url, title, desc) {
+if (wasDraggingCollage) {
+e.preventDefault();
+return;
+}
+openLightboxImage(url, title, desc);
+}
+function setupInfiniteRow(rowId, trackId, direction, gen) {
+const row = document.getElementById(rowId);
+const track = document.getElementById(trackId);
+if (!row || !track) return;
+const originalHTML = track.innerHTML;
+track.innerHTML = originalHTML + originalHTML;
+let singleSetWidth = track.scrollWidth / 2;
+window.addEventListener('resize', () => {
+singleSetWidth = track.scrollWidth / 2;
+});
+const speed = 0.55; // gentle slow-motion speed
+let isInteracting = false;
+let resumeTimeout = null;
+if (direction === 'right') {
+row.scrollLeft = singleSetWidth;
+}
+function step() {
+if (gen !== galleryGen) return;
+if (singleSetWidth <= 0) singleSetWidth = track.scrollWidth / 2;
+if (!isInteracting && singleSetWidth > 0) {
+if (direction === 'left') {
+row.scrollLeft += speed;
+if (row.scrollLeft >= singleSetWidth) {
+row.scrollLeft -= singleSetWidth; // seamless snapback
+}
+} else {
+row.scrollLeft -= speed;
+if (row.scrollLeft <= 0) {
+row.scrollLeft += singleSetWidth; // seamless wrap
+}
+}
+}
+requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+row.addEventListener('touchstart', () => {
+isInteracting = true;
+wasDraggingCollage = false;
+if (resumeTimeout) clearTimeout(resumeTimeout);
+}, { passive: true });
+row.addEventListener('touchmove', () => {
+wasDraggingCollage = true;
+isInteracting = true;
+}, { passive: true });
+row.addEventListener('touchend', () => {
+resumeTimeout = setTimeout(() => {
+isInteracting = false;
+wasDraggingCollage = false;
+}, 1600);
+}, { passive: true });
+let isMouseDown = false;
+let startX = 0;
+let initialScroll = 0;
+row.addEventListener('mousedown', (e) => {
+isMouseDown = true;
+isInteracting = true;
+wasDraggingCollage = false;
+startX = e.pageX - row.offsetLeft;
+initialScroll = row.scrollLeft;
+if (resumeTimeout) clearTimeout(resumeTimeout);
+});
+window.addEventListener('mouseup', () => {
+if (isMouseDown) {
+isMouseDown = false;
+resumeTimeout = setTimeout(() => {
+isInteracting = false;
+wasDraggingCollage = false;
+}, 1400);
+}
+});
+row.addEventListener('mousemove', (e) => {
+if (!isMouseDown) return;
+e.preventDefault();
+const currentX = e.pageX - row.offsetLeft;
+const diff = currentX - startX;
+if (Math.abs(diff) > 5) {
+wasDraggingCollage = true;
+}
+row.scrollLeft = initialScroll - diff;
+});
+row.addEventListener('mouseleave', () => {
+if (isMouseDown) {
+isMouseDown = false;
+resumeTimeout = setTimeout(() => {
+isInteracting = false;
+wasDraggingCollage = false;
+}, 1200);
+}
+});
+}
+function openLightboxImage(url, title, desc) {
+document.getElementById('lightboxImg').src = url;
+document.getElementById('lightboxTitle').textContent = title;
+document.getElementById('lightboxDesc').textContent = desc;
+document.getElementById('imageLightboxModal').classList.remove('hidden');
+}
+function closeLightbox() {
+document.getElementById('imageLightboxModal').classList.add('hidden');
+}
+const REVIEWS_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
+let sheetReviews = [];   // live reviews from Google Sheet (newest first)
+let reviewsState = 'loading';   // loading | ready | error | off
+let reviewsErrorMsg = '';
+function esc(s) {
+return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function getAllReviews() {
+return sheetReviews;
+}
+function fmtReviewDate(v) {
+if (!v) return '';
+if (/^\d{1,2} [A-Za-z]{3} \d{4}$/.test(String(v).trim())) return String(v).trim();
+const d = new Date(String(v).replace(/,\s*(\d{1,2}:\d{2}.*)$/, ''));
+if (isNaN(d)) return String(v).split(',')[0];
+return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+}
+function mapSheetReview(r) {
+return {
+name: r.name,
+role: r.role,
+batch: r.role === 'Guardian' ? `Guardian of ${r.class}` : r.class,
+rating: r.rating,
+comment: r.comment,
+date: fmtReviewDate(r.date),
+row: r.row,
+ts: r.ts
+};
+}
+let reviewStats = null;   // {count, sum} for ALL reviews (server side, not limited to the 200 sent)
+let reviewsSig = '';
+function computeRatingStats() {
+const list = getAllReviews();
+let count = list.length;
+let sum = list.reduce((t, r) => t + (Number(r.rating) || 0), 0);
+if (reviewStats && reviewStats.count > count) { count = reviewStats.count; sum = reviewStats.sum; }
+return { count: count, avg: count ? sum / count : 0 };
+}
+function starsHTML(avg) {
+const r = Math.round(avg * 2) / 2;   // nearest 0.5
+let h = '';
+for (let i = 1; i <= 5; i++) {
+if (r >= i) h += '<i class="fa-solid fa-star"></i>';
+else if (r >= i - 0.5) h += '<i class="fa-solid fa-star-half-stroke"></i>';
+else h += '<i class="fa-regular fa-star"></i>';
+}
+return h;
+}
+function updateRatingSummary() {
+const avgEl = document.getElementById('ratingAvg');
+const starsEl = document.getElementById('ratingStars');
+const cntEl = document.getElementById('ratingCount');
+if (!avgEl || !starsEl || !cntEl) return;
+const st = computeRatingStats();
+if (!st.count) {
+avgEl.textContent = '–';
+starsEl.innerHTML = starsHTML(0);
+cntEl.textContent = reviewsState === 'loading' ? 'Loading reviews…'
+: reviewsState === 'ready' ? 'No reviews yet' : 'Ratings unavailable';
+return;
+}
+avgEl.textContent = st.avg.toFixed(1);
+starsEl.innerHTML = starsHTML(st.avg);
+starsEl.setAttribute('aria-label', st.avg.toFixed(1) + ' out of 5 stars');
+cntEl.textContent = `Based on ${st.count} ${st.count === 1 ? 'review' : 'reviews'} from Students & Parents`;
+}
+async function loadReviewsFromSheet(silent) {
+if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
+reviewsState = 'off';
+renderReviewsCarousel();
+return;
+}
+try {
+const res = await fetch(apiUrl('action=reviews&t=' + Date.now()));
+const data = await res.json();
+if (!data.ok) throw new Error(data.error || 'Failed');
+if (!Array.isArray(data.reviews)) throw new Error('This link answered with: ' + Object.keys(data).join(', '));
+const sig = data.reviews.length + '|' + (data.stats ? data.stats.sum : '') + '|' + (data.reviews[0] ? data.reviews[0].ts : 0);
+if (silent && sig === reviewsSig) return;   // nothing changed
+reviewsSig = sig;
+sheetReviews = data.reviews.map(mapSheetReview);
+reviewStats = data.stats ? { count: Number(data.stats.count) || 0, sum: Number(data.stats.sum) || 0 } : null;
+reviewsState = 'ready';
+reviewsErrorMsg = '';
+} catch (err) {
+if (silent) return;   // keep what is already on screen
+console.error('Could not load reviews', err);
+reviewsState = 'error';
+reviewsErrorMsg = /failed to fetch|networkerror|load failed/i.test(String(err.message))
+? 'Could not reach the Apps Script. Check that the Web App access is set to "Anyone".'
+: String(err.message || err);
+}
+renderReviewsCarousel();
+}
+setInterval(() => { if (!document.hidden) loadReviewsFromSheet(true); }, 300000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadReviewsFromSheet(true); });
+let currentReviewPage = 0;
+let totalReviewPages = 1;
+function renderReviewsCarousel() {
+const reviews = getAllReviews();
+const track = document.getElementById('reviewsPagesTrack');
+const bubblesContainer = document.getElementById('reviewsBubbles');
+const paginationWrapper = document.getElementById('reviewsPaginationContainer');
+updateRatingSummary();
+if (!track || !bubblesContainer) return;
+if (reviews.length === 0) {
+const msgs = {
+loading: 'Loading reviews…',
+error: 'Reviews are unavailable right now.',
+off: 'Reviews will appear here soon.',
+ready: 'No reviews yet. Be the first to share your experience!'
+};
+track.innerHTML = `<div class="w-full shrink-0 px-0.5"><div class="bg-white rounded-2xl p-5 text-center text-xs text-slate-500 border border-slate-200/80">${msgs[reviewsState] || ''}${reviewsState === 'error' && reviewsErrorMsg ? `<span class="block mt-1 text-[10px] text-slate-400">${esc(reviewsErrorMsg)}</span>` : ''}</div></div>`;
+paginationWrapper.classList.add('hidden');
+currentReviewPage = 0;
+updateReviewTrackPosition();
+return;
+}
+const perPage = 3;
+totalReviewPages = Math.ceil(reviews.length / perPage);
+if (currentReviewPage >= totalReviewPages) {
+currentReviewPage = Math.max(0, totalReviewPages - 1);
+}
+let pagesHTML = '';
+for (let p = 0; p < totalReviewPages; p++) {
+const pageItems = reviews.slice(p * perPage, (p + 1) * perPage);
+pagesHTML += `
+<div class="w-full shrink-0 space-y-3 px-0.5">
+${pageItems.map((r, itemIdx) => {
+const globalIndex = p * perPage + itemIdx;
+return `
+<div onclick="openReviewFocusModal(${globalIndex})" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 transition-all hover:shadow-md hover:border-slate-300 active:scale-[0.99] cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full ${r.role === 'Guardian' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-brand-royal'} flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+${esc(r.name.charAt(0).toUpperCase())}
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h4 class="text-xs font-extrabold text-slate-900">${esc(r.name)}</h4>
+<span class="text-[9px] px-1.5 py-0.2 rounded font-semibold ${r.role === 'Guardian' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-brand-royal border border-blue-200'}">
+${esc(r.role)}
+</span>
+</div>
+<p class="text-[10px] text-slate-500 font-medium">${esc(r.batch)}</p>
+${r.date ? `<p class="text-[9px] text-slate-400 mt-0.5"><i class="fa-regular fa-clock"></i> ${esc(r.date)}</p>` : ''}
+</div>
+</div>
+<div class="flex text-amber-400 text-[10px]">
+${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}
+</div>
+</div>
+<div class="mt-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
+<p class="text-xs text-slate-600 leading-relaxed line-clamp-3">
+“${esc(r.comment)}”
+</p>
+</div>
+</div>
+`;
+}).join('')}
+</div>
+`;
+}
+track.innerHTML = pagesHTML;
+if (totalReviewPages > 1) {
+paginationWrapper.classList.remove('hidden');
+bubblesContainer.innerHTML = Array.from({ length: totalReviewPages }).map((_, idx) => `
+<button onclick="goToReviewPage(${idx})" class="transition-all duration-300 ${idx === currentReviewPage ? 'w-6 h-2 bg-brand-navy rounded-full shadow-xs' : 'w-2 h-2 bg-slate-300 hover:bg-slate-400 rounded-full'}" aria-label="Go to reviews page ${idx + 1}"></button>
+`).join('');
+} else {
+paginationWrapper.classList.add('hidden');
+}
+updateReviewTrackPosition();
+}
+function updateReviewTrackPosition() {
+const track = document.getElementById('reviewsPagesTrack');
+if (track) {
+track.style.transform = `translateX(-${currentReviewPage * 100}%)`;
+}
+const bubbles = document.querySelectorAll('#reviewsBubbles button');
+bubbles.forEach((btn, idx) => {
+if (idx === currentReviewPage) {
+btn.className = 'w-6 h-2 bg-brand-navy rounded-full shadow-xs transition-all duration-300';
+} else {
+btn.className = 'w-2 h-2 bg-slate-300 hover:bg-slate-400 rounded-full transition-all duration-300';
+}
+});
+}
+function goToReviewPage(idx) {
+if (idx >= 0 && idx < totalReviewPages) {
+currentReviewPage = idx;
+updateReviewTrackPosition();
+}
+}
+function nextReviewPage() {
+if (currentReviewPage < totalReviewPages - 1) {
+currentReviewPage++;
+updateReviewTrackPosition();
+}
+}
+function prevReviewPage() {
+if (currentReviewPage > 0) {
+currentReviewPage--;
+updateReviewTrackPosition();
+}
+}
+function openReviewFocusModal(index) {
+if (wasSwipingReviews) return;
+const r = getAllReviews()[index];
+if (!r) return;
+const modal = document.getElementById('reviewFocusModal');
+const card = document.getElementById('reviewFocusCard');
+const avatar = document.getElementById('focusAvatar');
+const name = document.getElementById('focusName');
+const roleBadge = document.getElementById('focusRoleBadge');
+const batch = document.getElementById('focusBatch');
+const stars = document.getElementById('focusStars');
+const comment = document.getElementById('focusComment');
+avatar.textContent = r.name.charAt(0);
+avatar.className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ${r.role === 'Guardian' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-brand-royal'}`;
+name.textContent = r.name;
+roleBadge.textContent = r.role;
+roleBadge.className = `text-[9px] px-1.5 py-0.2 rounded font-semibold ${r.role === 'Guardian' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-brand-royal border border-blue-200'}`;
+batch.innerHTML = `${esc(r.batch)}${r.date ? `<span class="block">${esc(r.date)}</span>` : ''}`;
+stars.innerHTML = Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('');
+comment.textContent = `“${r.comment}”`;
+modal.classList.remove('hidden');
+setTimeout(() => {
+card.classList.remove('scale-95');
+card.classList.add('scale-100');
+}, 10);
+}
+function closeReviewFocusModal(e) {
+if (e && e.target !== e.currentTarget && !e.target.closest('button')) return;
+const modal = document.getElementById('reviewFocusModal');
+const card = document.getElementById('reviewFocusCard');
+card.classList.remove('scale-100');
+card.classList.add('scale-95');
+setTimeout(() => {
+modal.classList.add('hidden');
+}, 150);
+}
+let wasSwipingReviews = false;
+function setupReviewsSwipe() {
+const track = document.getElementById('reviewsPagesTrack');
+if (!track) return;
+let startX = 0;
+let endX = 0;
+let isSwiping = false;
+track.addEventListener('touchstart', (e) => {
+startX = e.changedTouches[0].screenX;
+isSwiping = true;
+wasSwipingReviews = false;
+}, { passive: true });
+track.addEventListener('touchmove', () => {
+wasSwipingReviews = true;
+}, { passive: true });
+track.addEventListener('touchend', (e) => {
+if (!isSwiping) return;
+endX = e.changedTouches[0].screenX;
+handleSwipeGesture();
+isSwiping = false;
+setTimeout(() => { wasSwipingReviews = false; }, 200);
+}, { passive: true });
+let isMouseDown = false;
+track.addEventListener('mousedown', (e) => {
+isMouseDown = true;
+startX = e.clientX;
+wasSwipingReviews = false;
+});
+track.addEventListener('mousemove', (e) => {
+if (!isMouseDown) return;
+if (Math.abs(e.clientX - startX) > 8) {
+wasSwipingReviews = true;
+}
+});
+window.addEventListener('mouseup', (e) => {
+if (!isMouseDown) return;
+isMouseDown = false;
+endX = e.clientX;
+handleSwipeGesture();
+setTimeout(() => { wasSwipingReviews = false; }, 200);
+});
+function handleSwipeGesture() {
+const threshold = 45; // min swipe distance in px
+const diff = startX - endX;
+if (diff > threshold) {
+nextReviewPage();
+} else if (diff < -threshold) {
+prevReviewPage();
+}
+}
+}
+function toggleReviewModal() {
+const modal = document.getElementById('reviewModal');
+modal.classList.toggle('hidden');
+if (!modal.classList.contains('hidden')) {
+resetStars();
+}
+}
+function resetStars() {
+document.getElementById('selectedRating').value = '0';
+const starIcons = document.querySelectorAll('#starSelector i');
+starIcons.forEach(icon => {
+icon.className = 'fa-regular fa-star cursor-pointer text-slate-300 transition-colors';
+});
+}
+function setRating(stars) {
+document.getElementById('selectedRating').value = stars;
+const starIcons = document.querySelectorAll('#starSelector i');
+starIcons.forEach((icon, index) => {
+if (index < stars) {
+icon.className = 'fa-solid fa-star cursor-pointer text-amber-400 transition-colors';
+} else {
+icon.className = 'fa-regular fa-star cursor-pointer text-slate-300 transition-colors';
+}
+});
+}
+let reviewSubmitting = false;
+async function submitReview(event) {
+event.preventDefault();
+if (reviewSubmitting) return;
+const rating = parseInt(document.getElementById('selectedRating').value);
+if (!rating || rating < 1) {
+showToast('Please select a star rating first!');
+return;
+}
+const comment = document.getElementById('reviewerComment').value.trim();
+if (!comment) {
+showToast('Please write your review feedback!');
+return;
+}
+const role = document.querySelector('input[name="reviewerType"]:checked').value;
+const name = document.getElementById('reviewerName').value.trim();
+const cls = document.getElementById('reviewerClass').value;
+if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
+showToast('Review service is not connected yet.');
+return;
+}
+const btn = event.target.querySelector('button[type="submit"]');
+const btnText = btn.textContent;
+reviewSubmitting = true;
+btn.disabled = true;
+btn.textContent = 'Submitting...';
+try {
+const payload = {
+action: 'addReview',
+name: name,
+class: cls,
+rating: rating,
+comment: comment,
+feedback: comment,
+review: comment,
+role: role
+};
+const res = await fetch(REVIEWS_API, {
+method: 'POST',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify(payload)
+});
+const textResponse = await res.text();
+let data;
+try {
+data = JSON.parse(textResponse);
+} catch (e) {
+data = { ok: textResponse.toLowerCase().includes('success') };
+}
+if (data.ok === false) {
+throw new Error(data.error || 'Server rejected review submission');
+}
+const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now }));
+if (reviewStats) { reviewStats.count++; reviewStats.sum += rating; }
+currentReviewPage = 0;
+renderReviewsCarousel();
+toggleReviewModal();
+document.getElementById('reviewForm').reset();
+resetStars();
+showToast('Thank you! Your review has been published.');
+loadReviewsFromSheet();
+} catch (err) {
+console.error('Review submit error:', err);
+showToast('Error: ' + (err.message || 'Could not submit review'));
+} finally {
+reviewSubmitting = false;
+btn.disabled = false;
+btn.textContent = btnText;
+}
+}
+function openInquiryModal(scope) {
+const selectElem = document.getElementById('inqProgram');
+if (!selectElem) return;
+selectElem.innerHTML = '';
+const defaultOpt = document.createElement('option');
+defaultOpt.value = '';
+defaultOpt.textContent = 'Select Class';
+defaultOpt.disabled = true;
+defaultOpt.selected = true;
+selectElem.appendChild(defaultOpt);
+if (scope === '5-10') {
+const classes = ['Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'];
+classes.forEach(c => {
+const opt = document.createElement('option');
+opt.value = `${c} Admission Enquiry`;
+opt.textContent = c;
+selectElem.appendChild(opt);
+});
+} else if (scope === '11-12') {
+const classes = ['Class 11', 'Class 12'];
+classes.forEach(c => {
+const opt = document.createElement('option');
+opt.value = `${c} Admission Enquiry`;
+opt.textContent = c;
+selectElem.appendChild(opt);
+});
+} else {
+const groups = [
+{ group: 'Secondary (WBBSE)', items: ['Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'] },
+{ group: 'Higher Secondary (WBCHSE)', items: ['Class 11', 'Class 12'] }
+];
+groups.forEach(g => {
+const optGroup = document.createElement('optgroup');
+optGroup.label = g.group;
+g.items.forEach(c => {
+const opt = document.createElement('option');
+opt.value = `${c} Admission Enquiry`;
+opt.textContent = c;
+optGroup.appendChild(opt);
+});
+selectElem.appendChild(optGroup);
+});
+}
+document.getElementById('inquiryModal').classList.remove('hidden');
+}
+function closeInquiryModal() {
+document.getElementById('inquiryModal').classList.add('hidden');
+}
+function handleInquirySubmit(event) {
+event.preventDefault();
+const name = document.getElementById('inqName').value.trim();
+const program = document.getElementById('inqProgram').value;
+const query = document.getElementById('inqMessage').value.trim();
+const messageText = `Hello Gyanova Academy,%0A%0AI would like to enquire about admission:%0A- Name: ${encodeURIComponent(name)}%0A- Program: ${encodeURIComponent(program)}%0A${query ? `- Note: ${encodeURIComponent(query)}` : ''}%0A%0APlease share admission details and fee structure.`;
+const whatsappUrl = `https://wa.me/919163621264?text=${messageText}`;
+window.open(whatsappUrl, '_blank');
+closeInquiryModal();
+showToast('Opening WhatsApp Admission Desk...');
+}
+function showToast(message) {
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+toastMsg.textContent = message;
+toast.classList.remove('opacity-0', 'pointer-events-none');
+setTimeout(() => {
+toast.classList.add('opacity-0', 'pointer-events-none');
+}, 3000);
+}
+let currentCenterIndex = 0;
+const totalCenters = 2;
+let centerAutoSwipeInterval = null;
+function updateCenterCarouselUI() {
+const track = document.getElementById('centersCarouselTrack');
+if (!track) return;
+track.style.transform = `translateX(-${currentCenterIndex * 100}%)`;
+const tab0 = document.getElementById('centerTab0');
+const tab1 = document.getElementById('centerTab1');
+if (tab0 && tab1) {
+if (currentCenterIndex === 0) {
+tab0.className = 'py-2.5 px-2 rounded-xl bg-[#091c36] text-white shadow-sm transition-all flex items-center justify-center gap-1.5 text-center leading-tight';
+tab1.className = 'py-2.5 px-2 rounded-xl text-slate-700 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5 text-center leading-tight';
+} else {
+tab1.className = 'py-2.5 px-2 rounded-xl bg-[#091c36] text-white shadow-sm transition-all flex items-center justify-center gap-1.5 text-center leading-tight';
+tab0.className = 'py-2.5 px-2 rounded-xl text-slate-700 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5 text-center leading-tight';
+}
+}
+}
+function switchCenterSlide(index) {
+currentCenterIndex = index;
+updateCenterCarouselUI();
+restartCenterAutoSwipe();
+}
+function nextCenterSlide() {
+currentCenterIndex = (currentCenterIndex + 1) % totalCenters;
+updateCenterCarouselUI();
+restartCenterAutoSwipe();
+}
+function prevCenterSlide() {
+currentCenterIndex = (currentCenterIndex - 1 + totalCenters) % totalCenters;
+updateCenterCarouselUI();
+restartCenterAutoSwipe();
+}
+function startCenterAutoSwipe() {
+if (centerAutoSwipeInterval) clearInterval(centerAutoSwipeInterval);
+centerAutoSwipeInterval = setInterval(() => {
+currentCenterIndex = (currentCenterIndex + 1) % totalCenters;
+updateCenterCarouselUI();
+}, 20000);
+}
+function restartCenterAutoSwipe() {
+clearInterval(centerAutoSwipeInterval);
+startCenterAutoSwipe();
+}
+function setupCenterTouchGestures() {
+const carousel = document.getElementById('centersCarouselTrack');
+if (!carousel) return;
+let startX = 0;
+let endX = 0;
+carousel.addEventListener('touchstart', (e) => {
+startX = e.changedTouches[0].screenX;
+clearInterval(centerAutoSwipeInterval);
+}, { passive: true });
+carousel.addEventListener('touchend', (e) => {
+endX = e.changedTouches[0].screenX;
+if (startX - endX > 40) {
+nextCenterSlide();
+} else if (endX - startX > 40) {
+prevCenterSlide();
+} else {
+startCenterAutoSwipe();
+}
+}, { passive: true });
+}
+let galleryImages = [];
+let galleryGen = 0;
+let galleryState = 'loading';   // loading | ready | error | off
+let galleryErrorMsg = '';
+let galleryInfo = '';
+const COLLAGE_WIDTHS = ['w-36', 'w-56', 'w-40', 'w-52', 'w-44'];
+function apiUrl(query) {
+return REVIEWS_API + (REVIEWS_API.includes('?') ? '&' : '?') + query;
+}
+function driveImg(id, w) {
+return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${w}`;
+}
+let directFails = 0, directWins = 0;
+function imgAttrs(id, w, kind) {
+return `src="${driveImg(id, w)}" data-id="${esc(id)}" data-w="${w}" data-kind="${kind}" data-step="0" referrerpolicy="no-referrer" decoding="async" onload="imgLoaded(this)" onerror="imgFallback(this)"`;
+}
+function imgLoaded(el) {
+if (parseInt(el.dataset.step || '0', 10) < 3 && !String(el.src).startsWith('data:')) directWins++;
+}
+function imgFallback(el) {
+const id = el.dataset.id, w = el.dataset.w, kind = el.dataset.kind || 'thumb';
+let step = parseInt(el.dataset.step || '0', 10);
+if (step < 3) directFails++;
+if (step < 3 && directFails >= 3 && directWins === 0) step = 3;
+else step = step + 1;
+el.dataset.step = step;
+const sid = encodeURIComponent(id);
+if (step === 1) el.src = `https://drive.google.com/thumbnail?id=${sid}&sz=w${w}`;
+else if (step === 2) el.src = `https://drive.google.com/uc?export=view&id=${sid}`;
+else if (step === 3) {
+if (kind === 'thumb') queueThumb(el, id); else loadImgViaScript(el, id, kind);
+} else imgGiveUp(el);
+}
+function imgGiveUp(el) {
+el.onerror = null;
+el.style.opacity = '0';
+if (el.dataset.kind === 'thumb' && el.parentElement && !el.parentElement.querySelector('.img-fail')) {
+el.insertAdjacentHTML('afterend', '<span class="img-fail absolute inset-0 flex items-center justify-center text-center px-2 text-[10px] font-semibold text-slate-500">Photo unavailable</span>');
+}
+}
+async function loadImgViaScript(el, id, kind) {
+try {
+const res = await fetch(apiUrl(`action=${kind}&id=${encodeURIComponent(id)}`));
+const data = await res.json();
+if (data.ok) { el.onerror = null; el.src = data.data; return; }
+console.error('Image fallback failed:', data.error);
+} catch (err) {
+console.error('Image fallback failed', err);
+}
+imgGiveUp(el);
+}
+const thumbQueue = [];
+let thumbTimer = null, thumbActive = 0;
+function queueThumb(el, id) {
+thumbQueue.push({ el: el, id: id });
+if (!thumbTimer) thumbTimer = setTimeout(flushThumbs, 150);
+}
+function flushThumbs() {
+thumbTimer = null;
+while (thumbQueue.length && thumbActive < 2) {
+const batch = thumbQueue.splice(0, 6);
+thumbActive++;
+fetchThumbBatch(batch).finally(() => { thumbActive--; if (thumbQueue.length) flushThumbs(); });
+}
+}
+async function fetchThumbBatch(batch) {
+try {
+const ids = Array.from(new Set(batch.map(b => b.id)));
+const res = await fetch(apiUrl('action=thumbs&ids=' + encodeURIComponent(ids.join(','))));
+const data = await res.json();
+if (!data.ok || !data.thumbs) throw new Error(data.error || 'Old script version (no "thumbs" action)');
+batch.forEach(b => {
+const u = data.thumbs[b.id];
+if (u) { b.el.onerror = null; b.el.src = u; } else imgGiveUp(b.el);
+});
+} catch (err) {
+console.error('Thumbnail batch failed, trying one by one', err);
+await Promise.all(batch.map(b => loadImgViaScript(b.el, b.id, 'thumb')));
+}
+}
+function prettyName(name) {
+return String(name || '').replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+}
+function galleryItemHTML(img, i) {
+const w = COLLAGE_WIDTHS[i % COLLAGE_WIDTHS.length];
+const title = img.caption || prettyName(img.name);
+return `
+<div onclick="handleGalleryClick(event, '${esc(img.id)}')"
+class="${w} h-36 shrink-0 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-200 relative group cursor-pointer active:scale-95 transition">
+<img ${imgAttrs(img.id, 600, 'thumb')} alt="${esc(title)}" class="w-full h-full object-cover">
+${img.caption ? `<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition p-2 flex items-end"><span class="text-[10px] text-white font-bold leading-tight">${esc(img.caption)}</span></div>` : ''}
+</div>`;
+}
+function handleGalleryClick(e, id) {
+if (wasDraggingCollage) { e.preventDefault(); return; }
+const img = galleryImages.find(x => x.id === id);
+if (!img) return;
+openLightboxImage(driveImg(id, 1600), img.caption || prettyName(img.name) || 'Campus Photo', img.date ? `Added on ${img.date}` : 'Gyanova Academy');
+const big = document.getElementById('lightboxImg');
+big.style.opacity = '1';
+big.dataset.id = id; big.dataset.w = '1600'; big.dataset.kind = 'photo'; big.dataset.step = '0';
+big.referrerPolicy = 'no-referrer';
+big.onerror = () => imgFallback(big);
+const tag = document.getElementById('lightboxTag');
+if (tag) tag.textContent = 'Campus Gallery';
+}
+function resetCollageRow(rowId, trackId) {
+const old = document.getElementById(rowId);
+const fresh = old.cloneNode(false);          // drops old event listeners
+fresh.innerHTML = `<div id="${trackId}" class="flex items-center gap-2.5 shrink-0 w-max"></div>`;
+old.replaceWith(fresh);
+return { row: fresh, track: fresh.firstElementChild };
+}
+function renderGallery() {
+galleryGen++;   // stops any previous animation loop
+const msg = document.getElementById('galleryEmpty');
+const a = resetCollageRow('collageRow1', 'trackRow1');
+const b = resetCollageRow('collageRow2', 'trackRow2');
+if (galleryImages.length === 0) {
+const msgs = {
+loading: 'Loading photos…',
+error: 'Photos are unavailable right now.',
+off: 'Photos will appear here soon.',
+ready: 'No photos found in the Drive folder yet.'
+};
+msg.textContent = msgs[galleryState] || '';
+const extra = galleryState === 'error' ? galleryErrorMsg : (galleryState === 'ready' ? galleryInfo : '');
+if (extra) {
+const detail = document.createElement('span');
+detail.className = 'block mt-1 text-[10px] text-slate-400';
+detail.textContent = extra;
+msg.appendChild(detail);
+}
+msg.classList.remove('hidden');
+a.row.classList.add('hidden');
+b.row.classList.add('hidden');
+return;
+}
+msg.classList.add('hidden');
+if (galleryImages.length < 8) {
+a.track.innerHTML = galleryImages.map(galleryItemHTML).join('');
+a.row.classList.remove('hidden');
+b.row.classList.add('hidden');
+return;
+}
+a.track.innerHTML = galleryImages.filter((_, i) => i % 2 === 0).map(galleryItemHTML).join('');
+b.track.innerHTML = galleryImages.filter((_, i) => i % 2 === 1).map(galleryItemHTML).join('');
+a.row.classList.remove('hidden');
+b.row.classList.remove('hidden');
+const gen = galleryGen;
+setupInfiniteRow('collageRow1', 'trackRow1', 'right', gen);
+setupInfiniteRow('collageRow2', 'trackRow2', 'left', gen);
+}
+async function loadGalleryFromDrive(attempt) {
+attempt = attempt || 0;
+if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
+galleryState = 'off';
+galleryImages = [];
+renderGallery();
+return;
+}
+try {
+const ctrl = new AbortController();
+const timer = setTimeout(() => ctrl.abort(), 60000);
+const res = await fetch(apiUrl('action=images&t=' + Date.now()), { signal: ctrl.signal });
+clearTimeout(timer);
+const data = await res.json();
+if (!data.ok) throw new Error(data.error || 'Failed');
+if (!Array.isArray(data.images)) {
+throw new Error('This link (…' + REVIEWS_API.slice(-12, -5) + ') is running OLD code; it answered with: ' + Object.keys(data).join(', ') + '. Make a New deployment of the latest Code.gs and paste its link into REVIEWS_API.');
+}
+galleryImages = data.images;
+galleryState = 'ready';
+galleryErrorMsg = '';
+const inf = data.info;
+galleryInfo = inf
+? `The script looked at ${inf.files} file(s) and ${inf.folders} sub-folder(s) and found no photos.` + (inf.skipped && inf.skipped.length ? ' Skipped: ' + inf.skipped.join(', ') : '') + (inf.errors && inf.errors.length ? ' Errors: ' + inf.errors.join(' | ') : '')
+: '';
+} catch (err) {
+if (attempt < 1) {
+setTimeout(() => loadGalleryFromDrive(attempt + 1), 1500);
+return;
+}
+console.error('Could not load gallery', err);
+galleryImages = [];
+galleryState = 'error';
+galleryErrorMsg = err && err.name === 'AbortError'
+? 'Google Drive took too long to answer. Please reload the page.'
+: /failed to fetch|networkerror|load failed/i.test(String(err.message))
+? 'Could not reach the Apps Script. Check that the Web App access is set to "Anyone".'
+: String(err.message || err);
+}
+renderGallery();
+if (adminAuth) renderAdminPhotos();
+}
+let adminAuth = null;     // kept in memory only; cleared on logout / page refresh
+let adminBusy = false;
+async function apiPost(payload, withAuth) {
+if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) throw new Error('Backend URL is not set');
+const body = withAuth && adminAuth ? Object.assign({}, payload, { user: adminAuth.user, pass: adminAuth.pass }) : payload;
+const res = await fetch(REVIEWS_API, {
+method: 'POST',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify(body)
+});
+return res.json();
+}
+function openAdmin() {
+document.getElementById('adminModal').classList.remove('hidden');
+showAdminView();
+}
+function closeAdmin() {
+document.getElementById('adminModal').classList.add('hidden');
+}
+function showAdminView() {
+const loggedIn = !!adminAuth;
+document.getElementById('adminLoginView').classList.toggle('hidden', loggedIn);
+document.getElementById('adminPanelView').classList.toggle('hidden', !loggedIn);
+document.getElementById('adminLogoutBtn').classList.toggle('hidden', !loggedIn);
+if (loggedIn) {
+adminTab('reviews');
+renderAdminReviews();
+renderAdminPhotos();
+} else {
+setTimeout(() => document.getElementById('adminUser').focus(), 50);
+}
+}
+async function adminLogin(event) {
+event.preventDefault();
+const user = document.getElementById('adminUser').value.trim();
+const pass = document.getElementById('adminPass').value;
+const err = document.getElementById('adminLoginError');
+const btn = document.getElementById('adminLoginBtn');
+err.classList.add('hidden');
+btn.disabled = true;
+btn.textContent = 'Checking...';
+try {
+const data = await apiPost({ action: 'login', user, pass }, false);
+if (!data.ok) throw new Error(data.error || 'Login failed');
+sessionStorage.setItem('gyanova_admin', JSON.stringify({ user, pass }));
+document.getElementById('adminPass').value = '';
+window.location.href = 'admin.html';
+} catch (e) {
+err.textContent = e.message || 'Login failed';
+err.classList.remove('hidden');
+} finally {
+btn.disabled = false;
+btn.textContent = 'Login';
+}
+}
+function adminLogout() {
+adminAuth = null;
+document.getElementById('adminUser').value = '';
+document.getElementById('adminPass').value = '';
+showAdminView();
+}
+function adminTab(tab) {
+const isReviews = tab === 'reviews';
+document.getElementById('adminReviewsPane').classList.toggle('hidden', !isReviews);
+document.getElementById('adminPhotosPane').classList.toggle('hidden', isReviews);
+const on = 'py-2 rounded-lg transition bg-white text-brand-navy shadow-sm';
+const off = 'py-2 rounded-lg transition text-slate-500';
+document.getElementById('adminTabReviews').className = isReviews ? on : off;
+document.getElementById('adminTabPhotos').className = isReviews ? off : on;
+}
+function renderAdminReviews() {
+const list = document.getElementById('adminReviewsList');
+if (!sheetReviews.length) {
+list.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No reviews in the sheet yet.</p>';
+return;
+}
+list.innerHTML = sheetReviews.map((r, i) => `
+<div class="flex items-start justify-between gap-2 p-2.5 rounded-xl border border-slate-200">
+<div class="min-w-0">
+<p class="text-xs font-bold text-slate-800 truncate">${esc(r.name)} <span class="text-[9px] font-semibold text-slate-500">(${esc(r.role)})</span></p>
+<p class="text-[10px] text-slate-500">${esc(r.batch)}${r.date ? ' • ' + esc(r.date) : ''} • ${'★'.repeat(r.rating || 5)}</p>
+<p class="text-[11px] text-slate-600 mt-1 line-clamp-3">${esc(r.comment)}</p>
+</div>
+<button onclick="adminDeleteReview(${i})" ${r.row ? '' : 'disabled'} class="shrink-0 w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center active:scale-95 disabled:opacity-40" aria-label="Delete review">
+<i class="fa-solid fa-trash text-xs"></i>
+</button>
+</div>`).join('');
+}
+async function adminDeleteReview(i) {
+const r = sheetReviews[i];
+if (!r || !r.row || adminBusy) return;
+if (!confirm(`Delete the review by ${r.name}?`)) return;
+adminBusy = true;
+try {
+const data = await apiPost({ action: 'deleteReview', row: r.row, ts: r.ts }, true);
+if (!data.ok) throw new Error(data.error || 'Delete failed');
+showToast('Review deleted.');
+} catch (e) {
+showToast(e.message || 'Could not delete review.');
+}
+await loadReviewsFromSheet();   // re-sync row numbers
+renderAdminReviews();
+adminBusy = false;
+}
+function renderAdminPhotos() {
+const grid = document.getElementById('adminPhotosGrid');
+if (!galleryImages.length) {
+grid.innerHTML = '<p class="col-span-3 text-xs text-slate-500 text-center py-4">No photos in the Drive folder yet.</p>';
+return;
+}
+grid.innerHTML = galleryImages.map(img => `
+<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+<img ${imgAttrs(img.id, 300, 'thumb')} alt="" loading="lazy" class="w-full h-full object-cover">
+<button onclick="adminDeleteImage('${esc(img.id)}')" class="absolute top-1 right-1 w-7 h-7 rounded-lg bg-black/60 text-white flex items-center justify-center active:scale-95" aria-label="Delete photo">
+<i class="fa-solid fa-trash text-[10px]"></i>
+</button>
+</div>`).join('');
+}
+function fileToJpegBase64(file, maxDim, quality) {
+return new Promise((resolve, reject) => {
+const url = URL.createObjectURL(file);
+const img = new Image();
+img.onload = () => {
+const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+const c = document.createElement('canvas');
+c.width = w; c.height = h;
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, w, h);
+ctx.drawImage(img, 0, 0, w, h);
+URL.revokeObjectURL(url);
+resolve(c.toDataURL('image/jpeg', quality).split(',')[1]);
+};
+img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unsupported image: ' + file.name)); };
+img.src = url;
+});
+}
+async function adminUpload() {
+if (adminBusy) return;
+const input = document.getElementById('adminFiles');
+const files = Array.from(input.files || []);
+const status = document.getElementById('adminUploadStatus');
+const btn = document.getElementById('adminUploadBtn');
+if (!files.length) { status.textContent = 'Choose at least one photo first.'; return; }
+const caption = document.getElementById('adminCaption').value.trim();
+adminBusy = true;
+btn.disabled = true;
+let done = 0, failed = 0;
+for (const file of files) {
+status.textContent = `Uploading ${done + failed + 1} of ${files.length}...`;
+try {
+const data64 = await fileToJpegBase64(file, 1600, 0.85);
+const res = await apiPost({
+action: 'uploadImage',
+name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+mime: 'image/jpeg',
+data: data64,
+caption
+}, true);
+if (!res.ok) throw new Error(res.error || 'Upload failed');
+done++;
+} catch (e) {
+console.error(e);
+failed++;
+status.textContent = e.message || 'Upload failed';
+}
+}
+input.value = '';
+document.getElementById('adminCaption').value = '';
+status.textContent = `${done} uploaded${failed ? `, ${failed} failed` : ''}.`;
+btn.disabled = false;
+adminBusy = false;
+if (done) await loadGalleryFromDrive();
+}
+async function adminDeleteImage(id) {
+if (adminBusy || !confirm('Remove this photo from the gallery?')) return;
+adminBusy = true;
+try {
+const data = await apiPost({ action: 'deleteImage', id }, true);
+if (!data.ok) throw new Error(data.error || 'Delete failed');
+showToast('Photo removed.');
+} catch (e) {
+showToast(e.message || 'Could not remove photo.');
+}
+adminBusy = false;
+await loadGalleryFromDrive();
+}
+function syncHeaderSpacer() {
+const header = document.getElementById('siteHeader');
+const spacer = document.getElementById('headerSpacer');
+const nav = document.getElementById('mobileNavMenu');
+if (header && spacer && nav && nav.classList.contains('hidden')) {
+spacer.style.height = header.offsetHeight + 'px';
+}
+}
+window.addEventListener('resize', syncHeaderSpacer);
+let bgDataStarted = false;
+window.__startBackgroundDataLoads = () => {
+if (bgDataStarted) return;
+bgDataStarted = true;
+try { loadGalleryFromDrive(); } catch (e) { console.error(e); }
+try { loadReviewsFromSheet(); } catch (e) { console.error(e); }
+};
+window.addEventListener('load', () => {
+if (window.__welcomeVideoPromise && typeof window.__welcomeVideoPromise.finally === 'function') {
+window.__welcomeVideoPromise.finally(() => window.__startBackgroundDataLoads());
+}
+setTimeout(() => window.__startBackgroundDataLoads(), 1500);
+syncHeaderSpacer();
+renderReviewsCarousel();
+setupReviewsSwipe();
+startCenterAutoSwipe();
+setupCenterTouchGestures();
+});
+</script>
+</body></html>
