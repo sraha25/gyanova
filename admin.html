@@ -309,6 +309,17 @@
       background: #fafafa;
     }
 
+    .id-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: monospace;
+    }
+
     .edit-input {
       width: 100%;
       padding: 6px 10px;
@@ -455,7 +466,7 @@
       .header-btn-group {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 6px;
       }
 
@@ -535,7 +546,7 @@
 </head>
 <body>
 
-  <!-- Mobile Top Bar: Top edit button removed -->
+  <!-- Mobile Top Bar -->
   <header class="mobile-topbar">
     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
     <div class="mobile-brand">Gyanova Admin</div>
@@ -574,6 +585,7 @@
         <table>
           <thead>
             <tr id="students-header">
+              <th>Student ID</th>
               <th>Timestamp</th>
               <th>Student Name</th>
               <th>Class</th>
@@ -583,7 +595,7 @@
             </tr>
           </thead>
           <tbody id="students-body">
-            <tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Loading students data...</td></tr>
+            <tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Loading students data...</td></tr>
           </tbody>
         </table>
       </div>
@@ -597,6 +609,7 @@
         <div class="header-btn-group">
           <button class="top-action-btn" onclick="showAllAttendance()">👁️ Show All</button>
           <button class="top-action-btn btn-pdf" onclick="downloadAttendancePDF()">📥 Export PDF</button>
+          <button class="top-action-btn" onclick="archivePreviousYearAttendance()">🗄️ Archive Last Year</button>
           <button class="top-action-btn" onclick="loadAttendance()">🔄 Refresh</button>
         </div>
       </div>
@@ -606,11 +619,11 @@
         <div class="filter-item">
           <label>Date Filter Type</label>
           <select id="filter-date-mode" onchange="onDateModeChange()">
+            <option value="all">All Dates</option>
             <option value="today">Today</option>
             <option value="single">Single Date</option>
             <option value="range">Date Range</option>
             <option value="last_month">Last Month</option>
-            
           </select>
         </div>
 
@@ -714,7 +727,62 @@
       admission: "https://docs.google.com/forms/d/e/1FAIpQLScHIVEfoBN66ZVFGb0w3rRLuMLRKpGclgfM6Xai6T6-yuALMw/viewform?embedded=true",
       attendance: "attendance%20form.html"
     };
-    const ATTENDANCE_FORM_HTML = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>Teacher Portal<\/title>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n  <style>\n    /* --- CSS STYLES --- */\n    :root { --primary: #2563eb; --primary-dark: #1e40af; --secondary: #64748b; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #f1f5f9; --card: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0; --radius: 12px; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }\n    body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding: 20px 10px; color: var(--text-main); line-height: 1.5; }\n    .container { max-width: 600px; margin: 0 auto; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: relative; }\n    \n    .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 50px 20px 25px 20px; text-align: center; color: white; position: relative; }\n    .header h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }\n    \n    .queue-btn { position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: white; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: 0.2s; z-index: 10; }\n    .queue-btn:hover { background: rgba(255, 255, 255, 0.3); }\n    .queue-badge { background: var(--warning); color: #fff; font-size: 0.75rem; padding: 2px 6px; border-radius: 10px; display: none; }\n    \n    form { padding: 25px; }\n    #data-status { text-align: center; font-size: 0.85rem; margin-bottom: 20px; font-weight: 600; }\n    .form-group { margin-bottom: 20px; }\n    label.field-label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); font-size: 0.9rem; }\n    input[type=\"text\"], textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc; box-sizing: border-box; }\n    \n    /* VERTICAL BRANCH BUTTONS */\n    .branch-group { display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; padding: 10px; border-radius: 8px; }\n    .branch-group label { width: 100%; text-align: center; padding: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); background: white; border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; box-sizing: border-box; }\n    .branch-group input { display: none; }\n    .branch-group label:has(input:checked) { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }\n    \n    /* CLASS GRID */\n    #classCheckboxes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }\n    .class-option { display: flex; align-items: center; justify-content: center; padding: 12px 5px; background: white; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; }\n    .class-option:has(input:checked) { background: var(--primary); color: white; border-color: var(--primary); }\n    .class-option input { display: none; }\n    \n    .bulk-actions { display: flex; gap: 10px; margin-bottom: 12px; }\n    .bulk-btn { flex: 1; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; }\n    .bulk-btn.present { background: #ecfdf5; color: #059669; border-color: #d1fae5; }\n    .bulk-btn.absent { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }\n    \n    #studentListContainer { max-height: 40vh; overflow-y: auto; border: 1px solid var(--border); background: white; border-radius: 8px; display: none; }\n    .class-header { background: #f1f5f9; padding: 10px 15px; position: sticky; top: 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }\n    .student-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; }\n    .student-item label { margin: 0; font-weight: 500; display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; color: var(--text-main); }\n    input[type=\"checkbox\"] { width: 18px; height: 18px; accent-color: var(--primary); }\n    \n    .lock-section { background-color: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 15px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }\n    .lock-section input { width: 20px; height: 20px; accent-color: #d97706; }\n    \n    button { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }\n    #submitBtn { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }\n    #submitBtn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }\n    \n    /* Post-Submit Action Buttons */\n    #postSubmitActions { display: none; gap: 10px; margin-top: 20px; }\n    .btn-new { background: white; color: var(--primary); border: 2px solid var(--primary); }\n    .btn-update { background: var(--warning); color: white; }\n    \n    .loading { display: none; text-align: center; margin-top: 15px; color: var(--text-muted); }\n    \n    #debugBox { font-size: 0.75rem; background: #eee; padding: 10px; margin-top: 20px; border-radius: 8px; color: #333; display: none; }\n\n    /* MODALS */\n    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }\n    .modal-box { background: white; padding: 30px; border-radius: 16px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); max-height: 80vh; overflow-y: auto; }\n    .queue-list { list-style: none; padding: 0; margin: 0; text-align: left; }\n    .queue-item { background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }\n    .queue-item:hover { border-color: var(--primary); background: #f0f9ff; }\n    .q-title { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }\n    .q-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }\n    .q-empty { text-align: center; color: var(--text-muted); padding: 20px; }\n    .close-modal-btn { background: #e2e8f0; color: var(--text-main); margin-top: 15px; width: 100%; padding: 10px; font-size: 0.9rem; }\n  <\/style>\n<\/head>\n<body>\n\n<div class=\"container\">\n  <div class=\"header\">\n    <h2>\ud83d\udce2 Teacher Portal<\/h2>\n    <p> Attendance System<\/p>\n    <div class=\"queue-btn\" onclick=\"openQueueModal()\">\n      <span>\ud83d\udcc2 Active<\/span>\n      <span class=\"queue-badge\" id=\"queueCount\">0<\/span>\n    <\/div>\n  <\/div>\n\n  <form id=\"mainForm\">\n    <div id=\"data-status\" style=\"color: var(--text-muted);\">\u23f3 Connecting to database...<\/div>\n    \n    <div class=\"form-group\">\n      <label class=\"field-label\">Teacher Name<\/label>\n      <input type=\"text\" id=\"teacherName\" placeholder=\"e.g. Mr. Roy\" required>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Subject<\/label>\n      <input type=\"text\" id=\"subject\" placeholder=\"e.g. Mathematics\" required>\n    <\/div>\n\n    <div class=\"form-group\">\n      \n      <label class=\"field-label\">Branch<\/label>\n      <div class=\"branch-group\" id=\"branchContainer\">\n        <div style=\"padding:10px; width:100%; text-align:center; color:#ccc;\">Loading branches...<\/div>\n      <\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Select Class<\/label>\n      <div id=\"classCheckboxes\"><\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Student List<\/label>\n      <div class=\"bulk-actions\" id=\"bulkActions\" style=\"display:none;\">\n        <div class=\"bulk-btn present\" onclick=\"toggleAll(true)\"><span>\u2705<\/span> Present All<\/div>\n        <div class=\"bulk-btn absent\" onclick=\"toggleAll(false)\"><span>\u274c<\/span> Absent All<\/div>\n      <\/div>\n      <div id=\"studentListContainer\">\n        <div style=\"padding: 30px; color:#94a3b8; text-align:center;\">Select Branch and Class above.<\/div>\n      <\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Note / Description (Optional)<\/label>\n      <textarea id=\"description\" rows=\"3\" placeholder=\"Any remarks...\"><\/textarea>\n    <\/div>\n\n    <label class=\"lock-section\">\n      <input type=\"checkbox\" id=\"closeClass\">\n      <div class=\"lock-text\">\n        <strong>END Class<\/strong>\n        <small>Attendance cannot be marked after the class ends; it will be locked.<\/small>\n      <\/div>\n    <\/label>\n\n    <button type=\"submit\" id=\"submitBtn\" disabled>Submit Attendance \ud83d\ude80<\/button>\n    <p class=\"loading\" id=\"loader\">Syncing with Google Sheets...<\/p>\n\n    <div id=\"debugBox\"><\/div>\n\n    <div id=\"postSubmitActions\">\n      <button type=\"button\" class=\"btn-update\" id=\"addLateBtn\" onclick=\"handleAddLate()\">\u270f\ufe0f Add Late Student<\/button>\n      <button type=\"button\" class=\"btn-new\" onclick=\"startNew()\">\u2795 New Class<\/button>\n    <\/div>\n  <\/form>\n<\/div>\n\n<div id=\"statusModal\" class=\"modal-overlay\">\n  <div class=\"modal-box\">\n    <div style=\"font-size: 40px; margin-bottom: 10px;\" id=\"modalIcon\">\u2705<\/div>\n    <div style=\"font-size: 1.2rem; font-weight: 700;\" id=\"modalText\">Saved!<\/div>\n  <\/div>\n<\/div>\n\n<div id=\"queueModal\" class=\"modal-overlay\">\n  <div class=\"modal-box\">\n    <h3 style=\"margin-top:0;\">\ud83d\udcc2 Active Classes<\/h3>\n    <p style=\"font-size:0.85rem; color:#666;\">Click to resume & close a class.<\/p>\n    <ul class=\"queue-list\" id=\"queueList\"><\/ul>\n    <button class=\"close-modal-btn\" onclick=\"document.getElementById('queueModal').style.display='none'\">Close<\/button>\n  <\/div>\n<\/div>\n\n<script>\n  // --- CONFIGURATION ---\n  const scriptURL = 'https://script.google.com/macros/s/AKfycbw1DEvwlEYBhK0BgxEY5fr1ET3GxzVxjU8a81Wfgus7GeMl98TucvuXoodVNuDtfeN6eA/exec'; \n\n  let allStudents = []; \n  let currentSessionID = null; \n\n  const LS_KEY = \"teacherPortal_queue\";\n  function getQueue() { try { return JSON.parse(localStorage.getItem(LS_KEY) || \"[]\"); } catch (e) { return []; } }\n\n  // --- DYNAMIC BUTTON TEXT LOGIC ---\n  const closeCheckbox = document.getElementById('closeClass');\n  const submitBtn = document.getElementById('submitBtn');\n  const addLateBtn = document.getElementById('addLateBtn');\n\n  // CHANGE 1: Toggle Button Text based on Checkbox\n  closeCheckbox.addEventListener('change', function() {\n      if (this.checked) {\n          // If checkbox is ticked, change submit button text\n          submitBtn.innerHTML = \"End Class \ud83c\udfc1\";\n          submitBtn.style.backgroundColor = \"#d97706\"; // Orange/Warning\n          \n          // Also change the \"Add Late Student\" button text if visible\n          addLateBtn.innerHTML = \"End Class \ud83c\udfc1\";\n          addLateBtn.style.backgroundColor = \"#d97706\";\n      } else {\n          // Reset to default\n          submitBtn.innerHTML = \"Submit Attendance \ud83d\ude80\";\n          submitBtn.style.backgroundColor = \"\"; \n          \n          addLateBtn.innerHTML = \"\u270f\ufe0f Add Late Student\";\n          addLateBtn.style.backgroundColor = \"\"; // Reset to default warning color defined in CSS\n      }\n  });\n\n  // --- QUEUE LOGIC ---\n  function saveToQueue(payload) {\n    let queue = getQueue();\n    if (!currentSessionID) currentSessionID = Date.now().toString(); \n    const index = queue.findIndex(q => q.id === currentSessionID);\n    const sessionData = { id: currentSessionID, payload: payload, timestamp: new Date().toLocaleString() };\n    if (index > -1) queue[index] = sessionData;\n    else queue.push(sessionData);\n    try { localStorage.setItem(LS_KEY, JSON.stringify(queue)); } catch (e) {}\n    updateQueueUI();\n  }\n\n  function removeFromQueue(id) {\n    let queue = getQueue();\n    queue = queue.filter(q => q.id !== id);\n    try { localStorage.setItem(LS_KEY, JSON.stringify(queue)); } catch (e) {}\n    updateQueueUI();\n    currentSessionID = null; \n  }\n\n  function updateQueueUI() {\n    const queue = getQueue();\n    const countEl = document.getElementById('queueCount');\n    countEl.innerText = queue.length;\n    countEl.style.display = queue.length > 0 ? 'inline-block' : 'none';\n    // Tell the admin page (parent) how many classes are active\n    try { window.parent.postMessage({ type: 'activeClassCount', count: queue.length }, '*'); } catch (e) {}\n  }\n\n  function openQueueModal() {\n    const queue = getQueue();\n    const listEl = document.getElementById('queueList');\n    listEl.innerHTML = \"\";\n    if (queue.length === 0) listEl.innerHTML = \"<li class='q-empty'>No unended active classes.<\/li>\";\n    else {\n      queue.forEach(item => {\n        const p = item.payload;\n        let className = p.students.length > 0 ? p.students[0].classVal : \"Unknown\";\n        const li = document.createElement('li');\n        li.className = 'queue-item';\n        li.innerHTML = `<div class=\"q-title\">${p.teacher} - ${p.subject}<\/div><div class=\"q-meta\">${className} \u2022 ${p.branch} \u2022 ${item.timestamp}<\/div>`;\n        li.onclick = () => loadSessionFromQueue(item);\n        listEl.appendChild(li);\n      });\n    }\n    document.getElementById('queueModal').style.display = 'flex';\n  }\n\n  function loadSessionFromQueue(session) {\n    if(allStudents.length === 0) {\n        alert(\"The student database is still loading... please wait 5 seconds and try again.\");\n        return;\n    }\n\n    const p = session.payload;\n    document.getElementById('teacherName').value = p.teacher;\n    document.getElementById('subject').value = p.subject;\n    document.getElementById('description').value = p.description;\n    \n    // Select Branch\n    const branchRad = document.querySelector(`input[name=\"branch\"][value=\"${p.branch}\"]`);\n    if(branchRad) branchRad.checked = true;\n\n    // Select Class & Force Update\n    let savedClass = \"\";\n    if (p.students.length > 0) {\n        savedClass = p.students[0].classVal; \n    }\n\n    if (savedClass) {\n        const clsRad = document.querySelector(`.class-selector[value=\"${savedClass}\"]`);\n        if(clsRad) {\n            clsRad.checked = true;\n            updateStudentList();\n            \n            const studentNames = p.students.map(s => s.name);\n            document.querySelectorAll('.student-checkbox').forEach(box => {\n                if (studentNames.includes(box.value)) {\n                    box.checked = true;\n                }\n            });\n        }\n    }\n\n    currentSessionID = session.id;\n    document.getElementById('queueModal').style.display = 'none';\n    \n    // Show post-submit actions immediately since it's an active class\n    document.getElementById('submitBtn').style.display = 'none';\n    document.getElementById('postSubmitActions').style.display = 'flex';\n  }\n\n  // --- INITIALIZATION ---\n  window.addEventListener('load', () => {\n    updateQueueUI(); \n    fetch(scriptURL)\n      .then(response => response.json())\n      .then(data => {\n        if(data.error) {\n             alert(data.error);\n             document.getElementById('branchContainer').innerHTML = `<div style=\"color:red; padding:10px;\">${data.error}<\/div>`;\n             return;\n        }\n\n        if (data.students && data.branches) {\n          allStudents = data.students;\n          renderBranches(data.branches);\n        } else {\n          alert(\"Received unexpected data format.\");\n        }\n        document.getElementById('data-status').innerHTML = \"\u2705 Database Connected\";\n        document.getElementById('data-status').style.color = \"var(--success)\";\n        document.getElementById('submitBtn').disabled = false;\n        generateClassCheckboxes(); \n      })\n      .catch(error => {\n        console.error(error);\n        document.getElementById('data-status').innerHTML = \"\u274c Connection Failed.\";\n        document.getElementById('data-status').style.color = \"var(--danger)\";\n      });\n  });\n\n  function renderBranches(branchList) {\n    const container = document.getElementById('branchContainer');\n    container.innerHTML = ''; \n    branchList.sort();\n    branchList.forEach(branchName => {\n        const label = document.createElement('label');\n        label.innerHTML = `<input type=\"radio\" name=\"branch\" class=\"branch-selector\" value=\"${branchName}\" required> ${branchName}`;\n        container.appendChild(label);\n    });\n    document.querySelectorAll('.branch-selector').forEach(b => {\n        b.addEventListener('change', updateStudentList);\n    });\n  }\n\n  function generateClassCheckboxes() {\n    const classContainer = document.getElementById('classCheckboxes');\n    classContainer.innerHTML = \"\";\n    for (let i = 5; i <= 12; i++) {\n      let label = document.createElement('label');\n      label.className = \"class-option\"; \n      label.innerHTML = `<input type=\"radio\" name=\"classGroup\" class=\"class-selector\" value=\"Class ${i}\"> Class ${i}`;\n      classContainer.appendChild(label);\n    }\n    document.querySelectorAll('.class-selector').forEach(chk => {\n      chk.addEventListener('change', updateStudentList);\n    });\n  }\n\n  function updateStudentList() {\n    const studentContainer = document.getElementById('studentListContainer');\n    const bulkActions = document.getElementById('bulkActions');\n    const debugBox = document.getElementById('debugBox');\n    \n    studentContainer.style.display = 'block';\n    studentContainer.innerHTML = ''; \n    debugBox.style.display = 'none'; \n    \n    const selectedClassRadio = document.querySelector('.class-selector:checked');\n    const selectedBranchRadio = document.querySelector('.branch-selector:checked');\n\n    if (selectedClassRadio && selectedBranchRadio) {\n      \n      const selClass = selectedClassRadio.value.toString().trim().toLowerCase(); \n      const selBranch = selectedBranchRadio.value.toString().trim().toLowerCase();\n\n      let filteredStudents = allStudents.filter(s => {\n          let sClass = s.classVal.toString().trim().toLowerCase();\n          let sBranch = s.branchVal.toString().trim().toLowerCase();\n          return sClass == selClass && sBranch == selBranch;\n      });\n\n      if(filteredStudents.length > 0) {\n          let header = document.createElement('div');\n          header.className = 'class-header';\n          header.innerText = `${selectedBranchRadio.value} - ${selectedClassRadio.value}`;\n          studentContainer.appendChild(header);\n\n          filteredStudents.forEach(std => {\n            let div = document.createElement('div');\n            div.className = 'student-item';\n            div.innerHTML = `<label><input type=\"checkbox\" class=\"student-checkbox\" value=\"${std.name}\" data-phone=\"${std.phone}\" data-class=\"${std.classVal}\"> ${std.name}<\/label>`;\n            studentContainer.appendChild(div);\n          });\n          bulkActions.style.display = \"flex\"; \n      } else {\n         studentContainer.innerHTML = `<div style=\"padding: 30px; color:#94a3b8; text-align:center;\">\n           No students found.<br>\n           <small>(Checked: ${selectedClassRadio.value}, ${selectedBranchRadio.value})<\/small>\n         <\/div>`;\n         bulkActions.style.display = \"none\";\n         \n         if(allStudents.length > 0) {\n            debugBox.style.display = 'block';\n            let sample = allStudents.slice(0, 3).map(s => `${s.name} [${s.branchVal}, ${s.classVal}]`).join(\"<br>\");\n            debugBox.innerHTML = `<strong>DEBUG (First 3 students):<\/strong><br>${sample}`;\n         }\n      }\n    } else {\n      bulkActions.style.display = \"none\";\n      studentContainer.innerHTML = '<div style=\"padding: 30px; color:#94a3b8; text-align:center;\">Please select <b>both<\/b> a Branch and a Class.<\/div>';\n    }\n  }\n\n  function toggleAll(status) {\n    document.querySelectorAll('.student-checkbox').forEach(box => { box.checked = status; });\n  }\n\n  // --- SUBMIT LOGIC ---\n  const form = document.getElementById('mainForm');\n  const loader = document.getElementById('loader');\n  const modal = document.getElementById('statusModal');\n  const modalIcon = document.getElementById('modalIcon');\n  const modalText = document.getElementById('modalText');\n  const actionBtns = document.getElementById('postSubmitActions');\n\n  form.addEventListener('submit', e => {\n    e.preventDefault();\n    handleSubmit();\n  });\n\n  // CHANGE 2: \"Add Late Student\" simply triggers the form submission logic\n  function handleAddLate() {\n      // If checkbox is checked, this button acts as \"End Class\"\n      if (document.getElementById('closeClass').checked) {\n          handleSubmit(); \n      } else {\n          // If NOT checked, it acts as \"Add Late Student\" (Submit but keep page open)\n          handleSubmit(true); \n      }\n  }\n\n  function handleSubmit(keepOpen = false) {\n    loader.style.display = 'block';\n    \n    // Validation\n    const branchInput = document.querySelector('input[name=\"branch\"]:checked');\n    if(!branchInput) { alert(\"Select Branch\"); loader.style.display='none'; return; }\n\n    let selectedStudents = [];\n    document.querySelectorAll('.student-checkbox:checked').forEach(box => {\n      selectedStudents.push({ name: box.value, phone: box.getAttribute('data-phone'), classVal: box.getAttribute('data-class') });\n    });\n\n    if (selectedStudents.length === 0) {\n       let selectedRadio = document.querySelector('.class-selector:checked');\n       if (!selectedRadio) { alert(\"Select Class\"); loader.style.display='none'; return; }\n       selectedStudents.push({ name: \"(None/Absent)\", phone: \"\", classVal: selectedRadio.value });\n    }\n\n    let isCloseRequested = document.getElementById('closeClass').checked;\n\n    // Safety\n    if (isCloseRequested && !currentSessionID) {\n        alert(\"\u26a0\ufe0f You cannot END a class that hasn't STARTED yet.\\n\\nPlease uncheck 'Close & Lock Class'.\");\n        loader.style.display = 'none';\n        return; \n    }\n\n    let payload = {\n      teacher: document.getElementById('teacherName').value,\n      subject: document.getElementById('subject').value,\n      branch: branchInput.value,\n      description: document.getElementById('description').value,\n      students: selectedStudents,\n      close: isCloseRequested\n    };\n\n    fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) })\n    .then(response => response.text()) \n    .then(text => {\n      loader.style.display = 'none';\n      if (text.includes(\"Error:\")) { alert(text); return; }\n      \n      if (text.includes(\"Success\")) {\n        if (isCloseRequested) {\n          // END CLASS LOGIC\n          if (currentSessionID) removeFromQueue(currentSessionID);\n          modalIcon.innerHTML = \"\ud83c\udfc1\";\n          modalText.innerText = \"Class Ended!\";\n          modal.style.display = 'flex';\n          setTimeout(() => { startNew(); }, 1500); // Reload to start new\n        } else {\n          // SAVE & CONTINUE LOGIC\n          saveToQueue(payload);\n          modalIcon.innerHTML = \"\u2705\";\n          modalText.innerText = keepOpen ? \"Student Added!\" : \"Saved & Active!\";\n          modal.style.display = 'flex';\n          \n          setTimeout(() => {\n            modal.style.display = 'none';\n            // IMPORTANT: Stay on same page, show action buttons\n            document.getElementById('submitBtn').style.display = 'none';\n            actionBtns.style.display = 'flex';\n            \n            // Clear checks if it was just \"Add Late Student\" to prepare for next late entry?\n            // Actually, keep them checked so teacher sees who is present.\n            // If you want to clear ONLY for \"Add Late\", uncomment below:\n            // if(keepOpen) document.querySelectorAll('.student-checkbox').forEach(box => box.checked = false);\n          }, 1000);\n        }\n\n      } else if (text.includes(\"CLOSED\")) {\n        alert(\"This class is already closed.\");\n        if(currentSessionID) removeFromQueue(currentSessionID);\n        startNew();\n      }\n    })\n    .catch(err => { console.error(err); alert(\"Network Error\"); loader.style.display='none'; });\n  }\n\n  function startNew() {\n     if (currentSessionID) { currentSessionID = null; location.reload(); } else { location.reload(); }\n  }\n  \n  function continueUpdate(clearBoxes = true) { \n    // This function can be used if you want to manually \"Reset\" for adding more\n    document.getElementById('postSubmitActions').style.display = 'none'; \n    document.getElementById('submitBtn').style.display = 'flex'; \n    if(clearBoxes) {\n        document.querySelectorAll('.student-checkbox').forEach(box => { box.checked = false; });\n    }\n  }\n<\/script>\n<\/body>\n<\/html>\n";
+    const ATTENDANCE_FORM_HTML = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>Teacher Portal<\/title>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n  <style>\n    /* --- CSS STYLES --- */\n    :root { --primary: #2563eb; --primary-dark: #1e40af; --secondary: #64748b; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #f1f5f9; --card: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0; --radius: 12px; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }\n    body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding: 20px 10px; color: var(--text-main); line-height: 1.5; }\n    .container { max-width: 600px; margin: 0 auto; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: relative; }\n    \n    .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 50px 20px 25px 20px; text-align: center; color: white; position: relative; }\n    .header h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }\n    \n    .queue-btn { position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: white; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: 0.2s; z-index: 10; }\n    .queue-btn:hover { background: rgba(255, 255, 255, 0.3); }\n    .queue-badge { background: var(--warning); color: #fff; font-size: 0.75rem; padding: 2px 6px; border-radius: 10px; display: none; }\n    \n    form { padding: 25px; }\n    #data-status { text-align: center; font-size: 0.85rem; margin-bottom: 20px; font-weight: 600; }\n    .form-group { margin-bottom: 20px; }\n    label.field-label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); font-size: 0.9rem; }\n    input[type=\"text\"], textarea { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc; box-sizing: border-box; }\n    \n    /* VERTICAL BRANCH BUTTONS */\n    .branch-group { display: flex; flex-direction: column; gap: 10px; background: #f1f5f9; padding: 10px; border-radius: 8px; }\n    .branch-group label { width: 100%; text-align: center; padding: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); background: white; border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; box-sizing: border-box; }\n    .branch-group input { display: none; }\n    .branch-group label:has(input:checked) { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }\n    \n    /* CLASS GRID */\n    #classCheckboxes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }\n    .class-option { display: flex; align-items: center; justify-content: center; padding: 12px 5px; background: white; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; }\n    .class-option:has(input:checked) { background: var(--primary); color: white; border-color: var(--primary); }\n    .class-option input { display: none; }\n    \n    .bulk-actions { display: flex; gap: 10px; margin-bottom: 12px; }\n    .bulk-btn { flex: 1; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; }\n    .bulk-btn.present { background: #ecfdf5; color: #059669; border-color: #d1fae5; }\n    .bulk-btn.absent { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }\n    \n    #studentListContainer { max-height: 40vh; overflow-y: auto; border: 1px solid var(--border); background: white; border-radius: 8px; display: none; }\n    .class-header { background: #f1f5f9; padding: 10px 15px; position: sticky; top: 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }\n    .student-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; }\n    .student-item label { margin: 0; font-weight: 500; display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; color: var(--text-main); }\n    input[type=\"checkbox\"] { width: 18px; height: 18px; accent-color: var(--primary); }\n    \n    .lock-section { background-color: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 15px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }\n    .lock-section input { width: 20px; height: 20px; accent-color: #d97706; }\n    \n    button { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }\n    #submitBtn { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }\n    #submitBtn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }\n    \n    /* Post-Submit Action Buttons */\n    #postSubmitActions { display: none; gap: 10px; margin-top: 20px; }\n    .btn-new { background: white; color: var(--primary); border: 2px solid var(--primary); }\n    .btn-update { background: var(--warning); color: white; }\n    \n    .loading { display: none; text-align: center; margin-top: 15px; color: var(--text-muted); }\n    \n    #debugBox { font-size: 0.75rem; background: #eee; padding: 10px; margin-top: 20px; border-radius: 8px; color: #333; display: none; }\n\n    /* MODALS */\n    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }\n    .modal-box { background: white; padding: 30px; border-radius: 16px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); max-height: 80vh; overflow-y: auto; }\n    .queue-list { list-style: none; padding: 0; margin: 0; text-align: left; }\n    .queue-item { background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }\n    .queue-item:hover { border-color: var(--primary); background: #f0f9ff; }\n    .q-title { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }\n    .q-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }\n    .q-empty { text-align: center; color: var(--text-muted); padding: 20px; }\n    .close-modal-btn { background: #e2e8f0; color: var(--text-main); margin-top: 15px; width: 100%; padding: 10px; font-size: 0.9rem; }\n  <\/style>\n<\/head>\n<body>\n\n<div class=\"container\">\n  <div class=\"header\">\n    <h2>\ud83d\udce2 Teacher Portal<\/h2>\n    <p> Attendance System<\/p>\n    <div class=\"queue-btn\" onclick=\"openQueueModal()\">\n      <span>\ud83d\udcc2 Active<\/span>\n      <span class=\"queue-badge\" id=\"queueCount\">0<\/span>\n    <\/div>\n  <\/div>\n\n  <form id=\"mainForm\">\n    <div id=\"data-status\" style=\"color: var(--text-muted);\">\u23f3 Connecting to database...<\/div>\n    \n    <div class=\"form-group\">\n      <label class=\"field-label\">Teacher Name<\/label>\n      <input type=\"text\" id=\"teacherName\" placeholder=\"e.g. Mr. Roy\" required>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Subject<\/label>\n      <input type=\"text\" id=\"subject\" placeholder=\"e.g. Mathematics\" required>\n    <\/div>\n\n    <div class=\"form-group\">\n      \n      <label class=\"field-label\">Branch<\/label>\n      <div class=\"branch-group\" id=\"branchContainer\">\n        <div style=\"padding:10px; width:100%; text-align:center; color:#ccc;\">Loading branches...<\/div>\n      <\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Select Class<\/label>\n      <div id=\"classCheckboxes\"><\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Student List<\/label>\n      <div class=\"bulk-actions\" id=\"bulkActions\" style=\"display:none;\">\n        <div class=\"bulk-btn present\" onclick=\"toggleAll(true)\"><span>\u2705<\/span> Present All<\/div>\n        <div class=\"bulk-btn absent\" onclick=\"toggleAll(false)\"><span>\u274c<\/span> Absent All<\/div>\n      <\/div>\n      <div id=\"studentListContainer\">\n        <div style=\"padding: 30px; color:#94a3b8; text-align:center;\">Select Branch and Class above.<\/div>\n      <\/div>\n    <\/div>\n\n    <div class=\"form-group\">\n      <label class=\"field-label\">Note / Description (Optional)<\/label>\n      <textarea id=\"description\" rows=\"3\" placeholder=\"Any remarks...\"><\/textarea>\n    <\/div>\n\n    <label class=\"lock-section\">\n      <input type=\"checkbox\" id=\"closeClass\">\n      <div class=\"lock-text\">\n        <strong>END Class<\/strong>\n        <small>Attendance cannot be marked after the class ends; it will be locked.<\/small>\n      <\/div>\n    <\/label>\n\n    <button type=\"submit\" id=\"submitBtn\" disabled>Submit Attendance \ud83d\ude80<\/button>\n    <p class=\"loading\" id=\"loader\">Syncing with Google Sheets...<\/p>\n\n    <div id=\"debugBox\"><\/div>\n\n    <div id=\"postSubmitActions\">\n      <button type=\"button\" class=\"btn-update\" id=\"addLateBtn\" onclick=\"handleAddLate()\">\u270f\ufe0f Add Late Student<\/button>\n      <button type=\"button\" class=\"btn-new\" onclick=\"startNew()\">\u2795 New Class<\/button>\n    <\/div>\n  <\/form>\n<\/div>\n\n<div id=\"statusModal\" class=\"modal-overlay\">\n  <div class=\"modal-box\">\n    <div style=\"font-size: 40px; margin-bottom: 10px;\" id=\"modalIcon\">\u2705<\/div>\n    <div style=\"font-size: 1.2rem; font-weight: 700;\" id=\"modalText\">Saved!<\/div>\n  <\/div>\n<\/div>\n\n<div id=\"queueModal\" class=\"modal-overlay\">\n  <div class=\"modal-box\">\n    <h3 style=\"margin-top:0;\">\ud83d\udcc2 Active Classes<\/h3>\n    <p style=\"font-size:0.85rem; color:#666;\">Click to resume & close a class.<\/p>\n    <ul class=\"queue-list\" id=\"queueList\"><\/ul>\n    <button class=\"close-modal-btn\" onclick=\"document.getElementById('queueModal').style.display='none'\">Close<\/button>\n  <\/div>\n<\/div>\n\n<script>\n  // --- CONFIGURATION ---\n  const scriptURL = 'https://script.google.com/macros/s/AKfycbw1DEvwlEYBhK0BgxEY5fr1ET3GxzVxjU8a81Wfgus7GeMl98TucvuXoodVNuDtfeN6eA/exec'; \n\n  let allStudents = []; \n  let currentSessionID = null; \n\n  const LS_KEY = \"teacherPortal_queue\";\n  function getQueue() { try { return JSON.parse(localStorage.getItem(LS_KEY) || \"[]\"); } catch (e) { return []; } }\n\n  // --- DYNAMIC BUTTON TEXT LOGIC ---\n  const closeCheckbox = document.getElementById('closeClass');\n  const submitBtn = document.getElementById('submitBtn');\n  const addLateBtn = document.getElementById('addLateBtn');\n\n  // CHANGE 1: Toggle Button Text based on Checkbox\n  closeCheckbox.addEventListener('change', function() {\n      if (this.checked) {\n          // If checkbox is ticked, change submit button text\n          submitBtn.innerHTML = \"End Class \ud83c\udfc1\";\n          submitBtn.style.backgroundColor = \"#d97706\"; // Orange/Warning\n          \n          // Also change the \"Add Late Student\" button text if visible\n          addLateBtn.innerHTML = \"End Class \ud83c\udfc1\";\n          addLateBtn.style.backgroundColor = \"#d97706\";\n      } else {\n          // Reset to default\n          submitBtn.innerHTML = \"Submit Attendance \ud83d\ude80\";\n          submitBtn.style.backgroundColor = \"\"; \n          \n          addLateBtn.innerHTML = \"\u270f\ufe0f Add Late Student\";\n          addLateBtn.style.backgroundColor = \"\"; // Reset to default warning color defined in CSS\n      }\n  });\n\n  // --- QUEUE LOGIC ---\n  function saveToQueue(payload) {\n    let queue = getQueue();\n    if (!currentSessionID) currentSessionID = Date.now().toString(); \n    const index = queue.findIndex(q => q.id === currentSessionID);\n    const sessionData = { id: currentSessionID, payload: payload, timestamp: new Date().toLocaleString() };\n    if (index > -1) queue[index] = sessionData;\n    else queue.push(sessionData);\n    try { localStorage.setItem(LS_KEY, JSON.stringify(queue)); } catch (e) {}\n    updateQueueUI();\n  }\n\n  function removeFromQueue(id) {\n    let queue = getQueue();\n    queue = queue.filter(q => q.id !== id);\n    try { localStorage.setItem(LS_KEY, JSON.stringify(queue)); } catch (e) {}\n    updateQueueUI();\n    currentSessionID = null; \n  }\n\n  function updateQueueUI() {\n    const queue = getQueue();\n    const countEl = document.getElementById('queueCount');\n    countEl.innerText = queue.length;\n    countEl.style.display = queue.length > 0 ? 'inline-block' : 'none';\n    // Tell the admin page (parent) how many classes are active\n    try { window.parent.postMessage({ type: 'activeClassCount', count: queue.length }, '*'); } catch (e) {}\n  }\n\n  function openQueueModal() {\n    const queue = getQueue();\n    const listEl = document.getElementById('queueList');\n    listEl.innerHTML = \"\";\n    if (queue.length === 0) listEl.innerHTML = \"<li class='q-empty'>No unended active classes.<\/li>\";\n    else {\n      queue.forEach(item => {\n        const p = item.payload;\n        let className = p.students.length > 0 ? p.students[0].classVal : \"Unknown\";\n        const li = document.createElement('li');\n        li.className = 'queue-item';\n        li.innerHTML = `<div class=\"q-title\">${p.teacher} - ${p.subject}<\/div><div class=\"q-meta\">${className} \u2022 ${p.branch} \u2022 ${item.timestamp}<\/div>`;\n        li.onclick = () => loadSessionFromQueue(item);\n        listEl.appendChild(li);\n      });\n    }\n    document.getElementById('queueModal').style.display = 'flex';\n  }\n\n  function loadSessionFromQueue(session) {\n    if(allStudents.length === 0) {\n        alert(\"The student database is still loading... please wait 5 seconds and try again.\");\n        return;\n    }\n\n    const p = session.payload;\n    document.getElementById('teacherName').value = p.teacher;\n    document.getElementById('subject').value = p.subject;\n    document.getElementById('description').value = p.description;\n    \n    // Select Branch\n    const branchRad = document.querySelector(`input[name=\"branch\"][value=\"${p.branch}\"]`);\n    if(branchRad) branchRad.checked = true;\n\n    // Select Class & Force Update\n    let savedClass = \"\";\n    if (p.students.length > 0) {\n        savedClass = p.students[0].classVal; \n    }\n\n    if (savedClass) {\n        const clsRad = document.querySelector(`.class-selector[value=\"${savedClass}\"]`);\n        if(clsRad) {\n            clsRad.checked = true;\n            updateStudentList();\n            \n            const studentNames = p.students.map(s => s.name);\n            document.querySelectorAll('.student-checkbox').forEach(box => {\n                if (studentNames.includes(box.value)) {\n                    box.checked = true;\n                }\n            });\n        }\n    }\n\n    currentSessionID = session.id;\n    document.getElementById('queueModal').style.display = 'none';\n    \n    // Show post-submit actions immediately since it's an active class\n    document.getElementById('submitBtn').style.display = 'none';\n    document.getElementById('postSubmitActions').style.display = 'flex';\n  }\n\n  // --- INITIALIZATION ---\n  window.addEventListener('load', () => {\n    updateQueueUI(); \n    fetch(scriptURL)\n      .then(response => response.json())\n      .then(data => {\n        if(data.error) {\n             alert(data.error);\n             document.getElementById('branchContainer').innerHTML = `<div style=\"color:red; padding:10px;\">${data.error}<\/div>`;\n             return;\n        }\n\n        if (data.students && data.branches) {\n          allStudents = data.students;\n          renderBranches(data.branches);\n        } else {\n          alert(\"Received unexpected data format.\");\n        }\n        document.getElementById('data-status').innerHTML = \"\u2705 Database Connected\";\n        document.getElementById('data-status').style.color = \"var(--success)\";\n        document.getElementById('submitBtn').disabled = false;\n        generateClassCheckboxes(); \n      })\n      .catch(error => {\n        console.error(error);\n        document.getElementById('data-status').innerHTML = \"\u274c Connection Failed.\";\n        document.getElementById('data-status').style.color = \"var(--danger)\";\n      });\n  });\n\n  function renderBranches(branchList) {\n    const container = document.getElementById('branchContainer');\n    container.innerHTML = ''; \n    branchList.sort();\n    branchList.forEach(branchName => {\n        const label = document.createElement('label');\n        label.innerHTML = `<input type=\"radio\" name=\"branch\" class=\"branch-selector\" value=\"${branchName}\" required> ${branchName}`;\n        container.appendChild(label);\n    });\n    document.querySelectorAll('.branch-selector').forEach(b => {\n        b.addEventListener('change', updateStudentList);\n    });\n  }\n\n  function generateClassCheckboxes() {\n    const classContainer = document.getElementById('classCheckboxes');\n    classContainer.innerHTML = \"\";\n    for (let i = 5; i <= 12; i++) {\n      let label = document.createElement('label');\n      label.className = \"class-option\"; \n      label.innerHTML = `<input type=\"radio\" name=\"classGroup\" class=\"class-selector\" value=\"Class ${i}\"> Class ${i}`;\n      classContainer.appendChild(label);\n    }\n    document.querySelectorAll('.class-selector').forEach(chk => {\n      chk.addEventListener('change', updateStudentList);\n    });\n  }\n\n  function updateStudentList() {\n    const studentContainer = document.getElementById('studentListContainer');\n    const bulkActions = document.getElementById('bulkActions');\n    const debugBox = document.getElementById('debugBox');\n    \n    studentContainer.style.display = 'block';\n    studentContainer.innerHTML = ''; \n    debugBox.style.display = 'none'; \n    \n    const selectedClassRadio = document.querySelector('.class-selector:checked');\n    const selectedBranchRadio = document.querySelector('.branch-selector:checked');\n\n    if (selectedClassRadio && selectedBranchRadio) {\n      \n      const selClass = selectedClassRadio.value.toString().trim().toLowerCase(); \n      const selBranch = selectedBranchRadio.value.toString().trim().toLowerCase();\n\n      let filteredStudents = allStudents.filter(s => {\n          let sClass = s.classVal.toString().trim().toLowerCase();\n          let sBranch = s.branchVal.toString().trim().toLowerCase();\n          return sClass == selClass && sBranch == selBranch;\n      });\n\n      if(filteredStudents.length > 0) {\n          let header = document.createElement('div');\n          header.className = 'class-header';\n          header.innerText = `${selectedBranchRadio.value} - ${selectedClassRadio.value}`;\n          studentContainer.appendChild(header);\n\n          filteredStudents.forEach(std => {\n            let div = document.createElement('div');\n            div.className = 'student-item';\n            div.innerHTML = `<label><input type=\"checkbox\" class=\"student-checkbox\" value=\"${std.name}\" data-phone=\"${std.phone}\" data-class=\"${std.classVal}\"> ${std.name}<\/label>`;\n            studentContainer.appendChild(div);\n          });\n          bulkActions.style.display = \"flex\"; \n      } else {\n         studentContainer.innerHTML = `<div style=\"padding: 30px; color:#94a3b8; text-align:center;\">\n           No students found.<br>\n           <small>(Checked: ${selectedClassRadio.value}, ${selectedBranchRadio.value})<\/small>\n         <\/div>`;\n         bulkActions.style.display = \"none\";\n         \n         if(allStudents.length > 0) {\n            debugBox.style.display = 'block';\n            let sample = allStudents.slice(0, 3).map(s => `${s.name} [${s.branchVal}, ${s.classVal}]`).join(\"<br>\");\n            debugBox.innerHTML = `<strong>DEBUG (First 3 students):<\/strong><br>${sample}`;\n         }\n      }\n    } else {\n      bulkActions.style.display = \"none\";\n      studentContainer.innerHTML = '<div style=\"padding: 30px; color:#94a3b8; text-align:center;\">Please select <b>both<\/b> a Branch and a Class.<\/div>';\n    }\n  }\n\n  function toggleAll(status) {\n    document.querySelectorAll('.student-checkbox').forEach(box => { box.checked = status; });\n  }\n\n  // --- SUBMIT LOGIC ---\n  const form = document.getElementById('mainForm');\n  const loader = document.getElementById('loader');\n  const modal = document.getElementById('statusModal');\n  const modalIcon = document.getElementById('modalIcon');\n  const modalText = document.getElementById('modalText');\n  const actionBtns = document.getElementById('postSubmitActions');\n\n  form.addEventListener('submit', e => {\n    e.preventDefault();\n    handleSubmit();\n  });\n\n  // CHANGE 2: \"Add Late Student\" simply triggers the form submission logic\n  function handleAddLate() {\n      // If checkbox is checked, this button acts as \"End Class\"\n      if (document.getElementById('closeClass').checked) {\n          handleSubmit(); \n      } else {\n          // If NOT checked, it acts as \"Add Late Student\" (Submit but keep page open)\n          handleSubmit(true); \n      }\n  }\n\n  function handleSubmit(keepOpen = false) {\n    loader.style.display = 'block';\n    \n    // Validation\n    const branchInput = document.querySelector('input[name=\"branch\"]:checked');\n    if(!branchInput) { alert(\"Select Branch\"); loader.style.display='none'; return; }\n\n    let selectedStudents = [];\n    document.querySelectorAll('.student-checkbox:checked').forEach(box => {\n      selectedStudents.push({ name: box.value, phone: box.getAttribute('data-phone'), classVal: box.getAttribute('data-class') });\n    });\n\n    if (selectedStudents.length === 0) {\n       let selectedRadio = document.querySelector('.class-selector:checked');\n       if (!selectedRadio) { alert(\"Select Class\"); loader.style.display='none'; return; }\n       selectedStudents.push({ name: \"(None/Absent)\", phone: \"\", classVal: selectedRadio.value });\n    }\n\n    let isCloseRequested = document.getElementById('closeClass').checked;\n\n    // Safety\n    if (isCloseRequested && !currentSessionID) {\n        alert(\"\u26a0\ufe0f You cannot END a class that hasn't STARTED yet.\\n\\nPlease uncheck 'Close & Lock Class'.\");\n        loader.style.display = 'none';\n        return; \n    }\n\n    let payload = {\n      teacher: document.getElementById('teacherName').value,\n      subject: document.getElementById('subject').value,\n      branch: branchInput.value,\n      description: document.getElementById('description').value,\n      students: selectedStudents,\n      close: isCloseRequested\n    };\n\n    fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) })\n    .then(response => response.text()) \n    .then(text => {\n      loader.style.display = 'none';\n      if (text.includes(\"Error:\")) { alert(text); return; }\n      \n      if (text.includes(\"Success\")) {\n        if (isCloseRequested) {\n          // END CLASS LOGIC\n          if (currentSessionID) removeFromQueue(currentSessionID);\n          modalIcon.innerHTML = \"\ud83c\udfc1\";\n          modalText.innerText = \"Class Ended!\";\n          modal.style.display = 'flex';\n          setTimeout(() => { startNew(); }, 1500); // Reload to start new\n        } else {\n          // SAVE & CONTINUE LOGIC\n          saveToQueue(payload);\n          modalIcon.innerHTML = \"\u2705\";\n          modalText.innerText = keepOpen ? \"Student Added!\" : \"Saved & Active!\";\n          modal.style.display = 'flex';\n          \n          setTimeout(() => {\n            modal.style.display = 'none';\n            // IMPORTANT: Stay on same page, show action buttons\n            document.getElementById('submitBtn').style.display = 'none';\n            actionBtns.style.display = 'flex';\n            \n            // Clear checks if it was just \"Add Late Student\" to prepare for next late entry?\n            // Actually, keep them checked so teacher sees who is present.\n            // If you want to clear ONLY for \"Add Late\", uncomment below:\n            // if(keepOpen) document.querySelectorAll('.student-checkbox').forEach(box => box.checked = false);\n          }, 1000);\n        }\n\n      } else if (text.includes(\"CLOSED\")) {\n        alert(\"This class is already closed.\");\n        if(currentSessionID) removeFromQueue(currentSessionID);\n        startNew();\n      }\n    })\n    .catch(err => { console.error(err); alert(\"Network Error\"); loader.style.display='none'; });\n  }\n\n  function startNew() {\n     if (currentSessionID) { currentSessionID = null; location.reload(); } else { location.reload(); }\n  }\n  \n  function continueUpdate(clearBoxes = true) { \n    // This function can be used if you want to manually \"Reset\" for adding more\n    document.getElementById('postSubmitActions').style.display = 'none'; \n    document.getElementById('submitBtn').style.display = 'flex'; \n    if(clearBoxes) {\n        document.querySelectorAll('.student-checkbox').forEach(box => { box.checked = false; });\n    }\n  }\n<\x2fscript>\n<\/body>\n<\/html>\n";
+
+    // --- ADMIN SESSION & AUTHENTICATED API HELPER ---
+    let adminCreds = null;
+    try {
+      adminCreds = JSON.parse(sessionStorage.getItem("gyanova_admin") || "null");
+    } catch (e) {}
+
+    function redirectToLogin() {
+      try {
+        if (window.location.protocol === "blob:" || window.location.protocol === "about:" || window.location.protocol === "data:") {
+          document.body.innerHTML = '<div style="margin:auto;text-align:center;padding:32px;font-family:Inter,sans-serif;"><h2>Admin Session Required</h2><p style="color:#64748b;margin-top:8px;">Please log in through <strong>index.html</strong> to access the Admin Portal.</p></div>';
+          return;
+        }
+        window.location.replace("index.html");
+      } catch (err) {
+        document.body.innerHTML = '<div style="margin:auto;text-align:center;padding:32px;font-family:Inter,sans-serif;"><h2>Admin Session Required</h2><p style="color:#64748b;margin-top:8px;">Please log in through <strong>index.html</strong> to access the Admin Portal.</p></div>';
+      }
+    }
+
+    if (!adminCreds || !adminCreds.user || !adminCreds.pass) {
+      redirectToLogin();
+    }
+
+    async function callStudentAttendanceApi(payload) {
+      if (!adminCreds) throw new Error("Not logged in");
+      const res = await fetch(STUDENT_ATTENDANCE_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(Object.assign({}, payload, {
+          user: adminCreds.user,
+          pass: adminCreds.pass
+        }))
+      });
+      const data = await res.json();
+      if (data && data.ok === false && /unauthorized/i.test(String(data.error || ""))) {
+        alert("Session expired or unauthorized. Please log in again.");
+        sessionStorage.clear();
+        redirectToLogin();
+        throw new Error(data.error);
+      }
+      return data;
+    }
+
+    async function callReviewsPostApi(payload) {
+      if (!adminCreds) throw new Error("Not logged in");
+      const res = await fetch(REVIEWS_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(Object.assign({}, payload, {
+          user: adminCreds.user,
+          pass: adminCreds.pass
+        }))
+      });
+      return res.json();
+    }
 
     // --- ACTIVE CLASS COUNT (sent by the Attendance Form) ---
     const ACTIVE_COUNT_KEY = "gyanova_active_class_count";
@@ -736,13 +804,20 @@
 
     let cachedStudents = [];
     let cachedAttendance = [];
+    let isStudentDeleting = false;
     let currentFilteredAttendance = [];
+
+    function escapeHtml(str) {
+      return String(str == null ? "" : str).replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      }[c]));
+    }
 
     function logoutAdmin() {
       if (confirm("Are you sure you want to leave this page?")) {
         sessionStorage.clear();
-        localStorage.clear();
-        window.location.replace("index.html");
+        try { localStorage.removeItem(ACTIVE_COUNT_KEY); } catch (e) {}
+        redirectToLogin();
       }
     }
 
@@ -857,85 +932,93 @@
       onDateModeChange();
     }
 
-    // --- STUDENTS ---
+    // --- STUDENTS (Using Permanent Student ID) ---
     async function loadStudents() {
       const tbody = document.getElementById('students-body');
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Fetching student records...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Fetching student records...</td></tr>`;
       try {
-        const res = await fetch(`${STUDENT_ATTENDANCE_API_URL}?action=getStudents`);
-        cachedStudents = await res.json();
+        const result = await callStudentAttendanceApi({ action: 'getStudents' });
+        if (result && result.ok === false) {
+          throw new Error(result.error || 'Failed to fetch students');
+        }
+        cachedStudents = (Array.isArray(result) ? result : []).map(s => ({
+          ...s,
+          studentId: s.studentId || ('ROW-' + s.rowIndex)
+        }));
 
-        if (!Array.isArray(cachedStudents) || cachedStudents.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No students found in sheet.</td></tr>`;
+        if (cachedStudents.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No students found in sheet.</td></tr>`;
           return;
         }
 
         renderStudentsTable();
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Error loading students: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:red;">Error loading students: ${escapeHtml(err.message)}</td></tr>`;
       }
     }
 
     function renderStudentsTable() {
       const tbody = document.getElementById('students-body');
       tbody.innerHTML = cachedStudents.map(student => `
-        <tr id="row-student-${student.rowIndex}">
-          <td data-label="Timestamp">${student.timestamp}</td>
-          <td data-label="Student Name"><strong>${student.name}</strong></td>
-          <td data-label="Class">${student.class}</td>
-          <td data-label="Branch">${student.branch}</td>
-          <td data-label="Contact Number">${student.phone}</td>
+        <tr id="row-student-${escapeHtml(student.studentId)}">
+          <td data-label="Student ID"><span class="id-badge">${escapeHtml(student.studentId)}</span></td>
+          <td data-label="Timestamp">${escapeHtml(student.timestamp)}</td>
+          <td data-label="Student Name"><strong>${escapeHtml(student.name)}</strong></td>
+          <td data-label="Class">${escapeHtml(student.class)}</td>
+          <td data-label="Branch">${escapeHtml(student.branch)}</td>
+          <td data-label="Contact Number">${escapeHtml(student.phone)}</td>
           <td data-label="Action">
-            <button class="btn-action btn-edit" onclick="enableStudentEdit(${student.rowIndex})">✏️ Edit</button>
-            <button class="btn-action btn-delete" onclick="deleteStudent(${student.rowIndex})">🗑️ Delete</button>
+            <button class="btn-action btn-edit" onclick="enableStudentEdit('${escapeHtml(student.studentId)}')">✏️ Edit</button>
+            <button class="btn-action btn-delete" onclick="deleteStudent('${escapeHtml(student.studentId)}')">🗑️ Delete</button>
           </td>
         </tr>
       `).join('');
     }
 
-    function enableStudentEdit(rowIndex) {
-      const tr = document.getElementById(`row-student-${rowIndex}`);
-      const student = cachedStudents.find(s => s.rowIndex === rowIndex);
+    function enableStudentEdit(studentId) {
+      const tr = document.getElementById(`row-student-${studentId}`);
+      const student = cachedStudents.find(s => s.studentId === studentId);
       if (!tr || !student) return;
 
+      const safeId = escapeHtml(studentId);
       tr.innerHTML = `
-        <td data-label="Timestamp">${student.timestamp}</td>
-        <td data-label="Student Name"><input type="text" class="edit-input" id="edit-name-${rowIndex}" value="${student.name}" /></td>
-        <td data-label="Class"><input type="text" class="edit-input" id="edit-class-${rowIndex}" value="${student.class}" /></td>
-        <td data-label="Branch"><input type="text" class="edit-input" id="edit-branch-${rowIndex}" value="${student.branch}" /></td>
-        <td data-label="Contact Number"><input type="text" class="edit-input" id="edit-phone-${rowIndex}" value="${student.phone}" /></td>
+        <td data-label="Student ID"><span class="id-badge">${safeId}</span></td>
+        <td data-label="Timestamp">${escapeHtml(student.timestamp)}</td>
+        <td data-label="Student Name"><input type="text" class="edit-input" id="edit-name-${safeId}" value="${escapeHtml(student.name)}" /></td>
+        <td data-label="Class"><input type="text" class="edit-input" id="edit-class-${safeId}" value="${escapeHtml(student.class)}" /></td>
+        <td data-label="Branch"><input type="text" class="edit-input" id="edit-branch-${safeId}" value="${escapeHtml(student.branch)}" /></td>
+        <td data-label="Contact Number"><input type="text" class="edit-input" id="edit-phone-${safeId}" value="${escapeHtml(student.phone)}" /></td>
         <td data-label="Action">
-          <button class="btn-action btn-save" onclick="saveStudentEdit(${rowIndex})">💾 Save</button>
+          <button class="btn-action btn-save" onclick="saveStudentEdit('${safeId}', this)">💾 Save</button>
           <button class="btn-action btn-cancel" onclick="renderStudentsTable()">Cancel</button>
         </td>
       `;
     }
 
-    async function saveStudentEdit(rowIndex) {
-      const newName   = document.getElementById(`edit-name-${rowIndex}`).value.trim();
-      const newClass  = document.getElementById(`edit-class-${rowIndex}`).value.trim();
-      const newBranch = document.getElementById(`edit-branch-${rowIndex}`).value.trim();
-      const newPhone  = document.getElementById(`edit-phone-${rowIndex}`).value.trim();
+    async function saveStudentEdit(studentId, btn) {
+      const newName   = document.getElementById(`edit-name-${studentId}`).value.trim();
+      const newClass  = document.getElementById(`edit-class-${studentId}`).value.trim();
+      const newBranch = document.getElementById(`edit-branch-${studentId}`).value.trim();
+      const newPhone  = document.getElementById(`edit-phone-${studentId}`).value.trim();
+      const student   = cachedStudents.find(s => s.studentId === studentId);
 
-      const btn = event.target;
-      btn.innerText = 'Saving...';
-      btn.disabled = true;
+      if (btn) {
+        btn.innerText = 'Saving...';
+        btn.disabled = true;
+      }
 
       try {
-        const query = new URLSearchParams({
+        const result = await callStudentAttendanceApi({
           action: 'updateStudent',
-          rowIndex: rowIndex,
+          studentId: studentId,
+          rowIndex: student ? student.rowIndex : undefined,
           name: newName,
           class: newClass,
           branch: newBranch,
           phone: newPhone
         });
 
-        const res = await fetch(`${STUDENT_ATTENDANCE_API_URL}?${query.toString()}`);
-        const result = await res.json();
-
         if (result.ok) {
-          const student = cachedStudents.find(s => s.rowIndex === rowIndex);
           if (student) {
             student.name = newName;
             student.class = newClass;
@@ -953,25 +1036,39 @@
       }
     }
 
-    async function deleteStudent(rowIndex) {
-      const student = cachedStudents.find(s => s.rowIndex === rowIndex);
-      const name = student ? student.name : 'this student';
-      if (!confirm(`Are you sure you want to delete ${name}? This will remove the record from the Google Sheet.`)) {
+    async function deleteStudent(studentId) {
+      if (isStudentDeleting) {
+        alert('Please wait for the current deletion to finish.');
+        return;
+      }
+      const student = cachedStudents.find(s => s.studentId === studentId);
+      const name = student ? student.name : studentId;
+      if (!confirm(`Are you sure you want to delete ${name} (${studentId})? This will remove the record from the Google Sheet.`)) {
         return;
       }
 
+      isStudentDeleting = true;
       try {
-        const res = await fetch(`${STUDENT_ATTENDANCE_API_URL}?action=deleteStudent&rowIndex=${rowIndex}`);
-        const result = await res.json();
+        const deletedRow = student ? student.rowIndex : -1;
+        const result = await callStudentAttendanceApi({
+          action: 'deleteStudent',
+          studentId: studentId,
+          rowIndex: deletedRow > 0 ? deletedRow : undefined
+        });
 
         if (result.ok) {
-          cachedStudents = cachedStudents.filter(s => s.rowIndex !== rowIndex);
+          cachedStudents = cachedStudents
+            .filter(s => s.studentId !== studentId)
+            .map(s => (deletedRow > 0 && s.rowIndex > deletedRow ? { ...s, rowIndex: s.rowIndex - 1 } : s));
           renderStudentsTable();
         } else {
           alert('Failed to delete student: ' + (result.error || 'Server error'));
+          await loadStudents();
         }
       } catch (err) {
         alert('Network error while deleting student.');
+      } finally {
+        isStudentDeleting = false;
       }
     }
 
@@ -980,12 +1077,86 @@
       const tbody = document.getElementById('attendance-body');
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Fetching attendance records...</td></tr>`;
       try {
-        const res = await fetch(`${STUDENT_ATTENDANCE_API_URL}?action=getAttendance`);
-        cachedAttendance = await res.json();
+        let result = null;
+        try {
+          result = await callStudentAttendanceApi({ action: 'getAttendance', t: Date.now() });
+        } catch (postErr) {
+          result = null;
+        }
+
+        if (!Array.isArray(result)) {
+          const query = new URLSearchParams({
+            action: 'getAttendance',
+            user: adminCreds ? adminCreds.user : '',
+            pass: adminCreds ? adminCreds.pass : '',
+            t: String(Date.now())
+          });
+          const getRes = await fetch(`${STUDENT_ATTENDANCE_API_URL}?${query.toString()}`);
+          const getData = await getRes.json();
+          if (Array.isArray(getData)) {
+            result = getData;
+          } else if (getData && Array.isArray(getData.attendance)) {
+            result = getData.attendance;
+          } else if (getData && getData.ok === false) {
+            throw new Error(getData.error || 'Failed to fetch attendance');
+          } else if (result && result.ok === false) {
+            throw new Error(result.error || 'Failed to fetch attendance');
+          }
+        }
+
+        cachedAttendance = Array.isArray(result) ? result : [];
+
+        // Also merge students from "Student Contact Form Website1" if they aren't listed yet
+        if (!Array.isArray(cachedStudents) || cachedStudents.length === 0) {
+          try {
+            const stRes = await callStudentAttendanceApi({ action: 'getStudents' });
+            if (Array.isArray(stRes)) cachedStudents = stRes;
+          } catch (e) {}
+        }
+        const existingNames = new Set();
+        cachedAttendance.forEach(item => {
+          String(item.name || '').split(',').forEach(n => {
+            const clean = n.replace(/\s*\([^)]*\)\s*$/, '').trim().toLowerCase();
+            if (clean) existingNames.add(clean);
+          });
+        });
+        cachedStudents.forEach(std => {
+          const cleanName = String(std.name || '').trim();
+          if (cleanName && !existingNames.has(cleanName.toLowerCase())) {
+            cachedAttendance.push({
+              date: std.timestamp || '',
+              isoDate: parseItemDate(std.timestamp || ''),
+              teacher: '-',
+              branch: std.branch || '',
+              class: std.class || '',
+              name: cleanName,
+              status: 'NOT MARKED'
+            });
+          }
+        });
+
         populateAttendanceDropdowns(cachedAttendance);
         filterAttendance();
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Error loading attendance: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Error loading attendance: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    async function archivePreviousYearAttendance() {
+      const lastYear = new Date().getFullYear() - 1;
+      if (!confirm(`Move all attendance records from ${lastYear} into an archive tab (attendance_${lastYear})?`)) {
+        return;
+      }
+      try {
+        const result = await callStudentAttendanceApi({ action: 'archiveAttendance', year: lastYear });
+        if (result.ok) {
+          alert(`Archived ${result.moved} attendance record(s) from ${result.archivedYear}.`);
+          loadAttendance();
+        } else {
+          alert('Archive failed: ' + (result.error || 'Server error'));
+        }
+      } catch (err) {
+        alert('Network error while archiving attendance.');
       }
     }
 
@@ -1010,18 +1181,19 @@
       const branchSel  = document.getElementById('filter-branch');
       const teacherSel = document.getElementById('filter-teacher');
 
-      classSel.innerHTML   = `<option value="">All Classes</option>`   + classes.map(c => `<option value="${c.toLowerCase()}">${c}</option>`).join('');
-      branchSel.innerHTML  = `<option value="">All Branches</option>`  + branches.map(b => `<option value="${b.toLowerCase()}">${b}</option>`).join('');
-      teacherSel.innerHTML = `<option value="">All Teachers</option>`  + teachers.map(t => `<option value="${t.toLowerCase()}">${t}</option>`).join('');
+      classSel.innerHTML   = `<option value="">All Classes</option>`   + classes.map(c => `<option value="${escapeHtml(c.toLowerCase())}">${escapeHtml(c)}</option>`).join('');
+      branchSel.innerHTML  = `<option value="">All Branches</option>`  + branches.map(b => `<option value="${escapeHtml(b.toLowerCase())}">${escapeHtml(b)}</option>`).join('');
+      teacherSel.innerHTML = `<option value="">All Teachers</option>`  + teachers.map(t => `<option value="${escapeHtml(t.toLowerCase())}">${escapeHtml(t)}</option>`).join('');
     }
 
     function parseItemDate(dateStr) {
       if (!dateStr) return null;
-      if (dateStr.includes('-')) {
-        return dateStr.substring(0, 10);
+      const s = String(dateStr).trim();
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        return s.substring(0, 10);
       }
-      if (dateStr.includes('/')) {
-        const parts = dateStr.split('/');
+      if (s.includes('/')) {
+        const parts = s.split('/');
         if (parts.length === 3) {
           const d = parts[0].padStart(2, '0');
           const m = parts[1].padStart(2, '0');
@@ -1029,7 +1201,14 @@
           return `${y}-${m}-${d}`;
         }
       }
-      return dateStr;
+      const parsed = new Date(s);
+      if (!isNaN(parsed.getTime())) {
+        const y = parsed.getFullYear();
+        const m = String(parsed.getMonth() + 1).padStart(2, '0');
+        const d = String(parsed.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+      return s;
     }
 
     function filterAttendance() {
@@ -1073,16 +1252,20 @@
         return;
       }
 
-      tbody.innerHTML = currentFilteredAttendance.map(row => `
+      tbody.innerHTML = currentFilteredAttendance.map(row => {
+        const stLower = String(row.status).toLowerCase();
+        const statusColor = stLower.includes('closed') ? '#dc2626' : (stLower.includes('not marked') ? '#d97706' : '#16a34a');
+        return `
         <tr>
-          <td data-label="Date">${row.date}</td>
-          <td data-label="Student Name"><strong>${row.name}</strong></td>
-          <td data-label="Class">${row.class}</td>
-          <td data-label="Branch">${row.branch}</td>
-          <td data-label="Teacher">${row.teacher}</td>
-          <td data-label="Status"><span style="color: ${String(row.status).toLowerCase().includes('closed') ? '#dc2626' : '#16a34a'}; font-weight:600;">${row.status}</span></td>
+          <td data-label="Date">${escapeHtml(row.date)}</td>
+          <td data-label="Student Name"><strong>${escapeHtml(row.name)}</strong></td>
+          <td data-label="Class">${escapeHtml(row.class)}</td>
+          <td data-label="Branch">${escapeHtml(row.branch)}</td>
+          <td data-label="Teacher">${escapeHtml(row.teacher)}</td>
+          <td data-label="Status"><span style="color: ${statusColor}; font-weight:600;">${escapeHtml(row.status)}</span></td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // --- PDF EXPORT FUNCTION (Filtered Attendance) ---
@@ -1095,7 +1278,6 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
 
-      // Title & Header Information
       doc.setFontSize(16);
       doc.setTextColor(37, 99, 235);
       doc.text("Gyanova Academy - Attendance Report", 40, 45);
@@ -1112,7 +1294,6 @@
       doc.text(filterSummary, 40, 62);
       doc.text(`Generated: ${new Date().toLocaleString()}`, 40, 75);
 
-      // Format table body from current filtered array
       const tableRows = currentFilteredAttendance.map((item, index) => [
         index + 1,
         item.date || '',
@@ -1161,25 +1342,28 @@
 
         tbody.innerHTML = list.map(r => `
           <tr>
-            <td data-label="Date">${r.date || ''}</td>
-            <td data-label="Name"><strong>${r.name || 'Anonymous'}</strong></td>
+            <td data-label="Date">${escapeHtml(r.date || '')}</td>
+            <td data-label="Name"><strong>${escapeHtml(r.name || 'Anonymous')}</strong></td>
             <td data-label="Rating">${'⭐'.repeat(Number(r.rating) || 5)}</td>
-            <td data-label="Review / Feedback">${r.comment || ''}</td>
+            <td data-label="Review / Feedback">${escapeHtml(r.comment || '')}</td>
             <td data-label="Action">
-              <button class="btn-action btn-delete" onclick="deleteReview(${r.row})">Delete</button>
+              <button class="btn-action btn-delete" onclick="deleteReview(${Number(r.row)}, ${Number(r.ts || 0)})">Delete</button>
             </td>
           </tr>
         `).join('');
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;">Error loading reviews: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;">Error loading reviews: ${escapeHtml(err.message)}</td></tr>`;
       }
     }
 
-    async function deleteReview(rowIndex) {
+    async function deleteReview(rowIndex, ts) {
       if (!confirm('Are you sure you want to delete this review from the Google Sheet?')) return;
       try {
-        const res = await fetch(`${REVIEWS_API_URL}?action=deleteReview&row=${rowIndex}`);
-        const result = await res.json();
+        const result = await callReviewsPostApi({
+          action: 'deleteReview',
+          row: rowIndex,
+          ts: ts
+        });
         if (result.ok) loadReviews();
         else alert('Failed to delete review: ' + (result.error || 'Server error'));
       } catch (err) {
@@ -1188,6 +1372,7 @@
     }
 
     window.onload = () => {
+      if (!adminCreds || !adminCreds.user || !adminCreds.pass) return;
       onDateModeChange();
       loadStudents();
     };
