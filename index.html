@@ -475,37 +475,73 @@ return;
 }
 openLightboxImage(url, title, desc);
 }
-function setupInfiniteRow(rowId, trackId, direction, gen) {
+let gallerySharedDir = 1; // 1 = Row 1 forward & Row 2 reverse, -1 = Row 1 reverse & Row 2 forward
+function setupInfiniteRow(rowId, trackId, direction, gen, dualSync) {
 const row = document.getElementById(rowId);
 const track = document.getElementById(trackId);
 if (!row || !track) return;
-const originalHTML = track.innerHTML;
-track.innerHTML = originalHTML + originalHTML;
-let singleSetWidth = track.scrollWidth / 2;
+const origCount = track.children.length;
+if (!origCount) return;
+function getMaxScroll() {
+return Math.max(0, row.scrollWidth - row.clientWidth);
+}
+let maxScroll = getMaxScroll();
 window.addEventListener('resize', () => {
-singleSetWidth = track.scrollWidth / 2;
+maxScroll = getMaxScroll();
 });
 const speed = 0.55; // gentle slow-motion speed
+const polarity = direction === 'right' ? -1 : 1;
+let localDir = polarity;
 let isInteracting = false;
 let resumeTimeout = null;
-if (direction === 'right') {
-row.scrollLeft = singleSetWidth;
+let initializedRight = polarity !== -1;
+let exactScroll = 0;
+
+function initRightPosition() {
+const m = getMaxScroll();
+if (m > 0) {
+maxScroll = m;
+exactScroll = m;
+row.scrollLeft = m;
+initializedRight = true;
 }
+}
+if (!initializedRight) {
+requestAnimationFrame(initRightPosition);
+}
+
 function step() {
 if (gen !== galleryGen) return;
-if (singleSetWidth <= 0) singleSetWidth = track.scrollWidth / 2;
-if (!isInteracting && singleSetWidth > 0) {
-if (direction === 'left') {
-row.scrollLeft += speed;
-if (row.scrollLeft >= singleSetWidth) {
-row.scrollLeft -= singleSetWidth; // seamless snapback
-}
+maxScroll = getMaxScroll();
+if (!initializedRight) {
+if (maxScroll > 0) {
+initRightPosition();
 } else {
-row.scrollLeft -= speed;
-if (row.scrollLeft <= 0) {
-row.scrollLeft += singleSetWidth; // seamless wrap
+requestAnimationFrame(step);
+return;
 }
 }
+const activeDir = dualSync ? (gallerySharedDir * polarity) : localDir;
+if (!isInteracting && maxScroll > 0) {
+exactScroll += speed * activeDir;
+if (exactScroll >= maxScroll) {
+exactScroll = maxScroll;
+if (dualSync) {
+gallerySharedDir = -polarity;
+} else {
+localDir = -1;
+}
+} else if (exactScroll <= 0) {
+exactScroll = 0;
+if (dualSync) {
+gallerySharedDir = polarity;
+} else {
+localDir = 1;
+}
+}
+row.scrollLeft = exactScroll;
+} else {
+exactScroll = row.scrollLeft;
 }
 requestAnimationFrame(step);
 }
@@ -575,7 +611,36 @@ function closeLightbox() {
 document.getElementById('imageLightboxModal').classList.add('hidden');
 }
 const REVIEWS_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
-let sheetReviews = [];   // live reviews from Google Sheet (newest first)
+
+// --- SUPABASE DATABASE CONFIGURATION ---
+const SUPABASE_URL      = "https://czzfygynvvnskqghwzxs.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_v5RfjRlloDFwZRloSqYJAw_KEwlaAaq";
+
+function isSupabaseEnabled() {
+  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.startsWith("http"));
+}
+
+async function supabaseRequest(table, method = "GET", query = "", body = null) {
+  const url = `${SUPABASE_URL.replace(/\/$/, "")}/rest/v1/${table}${query ? "?" + query : ""}`;
+  const headers = {
+    "apikey": SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+    "Prefer": "return=representation"
+  };
+  if (SUPABASE_ANON_KEY.startsWith("eyJ")) {
+    headers["Authorization"] = `Bearer ${SUPABASE_ANON_KEY}`;
+  }
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Supabase (${table}): ${errText || res.statusText}`);
+  }
+  return res.status === 204 ? [] : res.json();
+}
+
+let sheetReviews = [];   // live reviews (newest first)
 let reviewsState = 'loading';   // loading | ready | error | off
 let reviewsErrorMsg = '';
 function esc(s) {
@@ -641,6 +706,36 @@ starsEl.setAttribute('aria-label', st.avg.toFixed(1) + ' out of 5 stars');
 cntEl.textContent = `Based on ${st.count} ${st.count === 1 ? 'review' : 'reviews'} from Students & Parents`;
 }
 async function loadReviewsFromSheet(silent) {
+if (isSupabaseEnabled()) {
+  try {
+    const rows = await supabaseRequest("reviews", "GET", "select=*&order=id.desc");
+    const mapped = (Array.isArray(rows) ? rows : []).map(r => mapSheetReview({
+      name: r.name || "Anonymous",
+      role: r.role || "Student",
+      class: r.class_name || "",
+      rating: Number(r.rating) || 5,
+      comment: r.comment || "",
+      date: r.date || "",
+      row: r.id,
+      ts: r.ts || 0
+    }));
+    const totalSum = mapped.reduce((acc, x) => acc + (Number(x.rating) || 0), 0);
+    const sig = mapped.length + '|' + totalSum + '|' + (mapped[0] ? mapped[0].row : 0);
+    if (silent && sig === reviewsSig) return;
+    reviewsSig = sig;
+    sheetReviews = mapped;
+    reviewStats = { count: mapped.length, sum: totalSum };
+    reviewsState = 'ready';
+    reviewsErrorMsg = '';
+  } catch (err) {
+    if (silent) return;
+    reviewsState = 'error';
+    reviewsErrorMsg = String(err.message || err);
+  }
+  renderReviewsCarousel();
+  return;
+}
+
 if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
 reviewsState = 'off';
 renderReviewsCarousel();
@@ -909,7 +1004,7 @@ return;
 const role = document.querySelector('input[name="reviewerType"]:checked').value;
 const name = document.getElementById('reviewerName').value.trim();
 const cls = document.getElementById('reviewerClass').value;
-if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
+if (!isSupabaseEnabled() && (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_'))) {
 showToast('Review service is not connected yet.');
 return;
 }
@@ -919,6 +1014,31 @@ reviewSubmitting = true;
 btn.disabled = true;
 btn.textContent = 'Submitting...';
 try {
+const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+const tsNow = Date.now();
+if (isSupabaseEnabled()) {
+  const inserted = await supabaseRequest("reviews", "POST", "", {
+    date: now,
+    name: name,
+    role: role,
+    class_name: cls,
+    rating: rating,
+    comment: comment,
+    ts: tsNow
+  });
+  const rowId = inserted && inserted[0] ? inserted[0].id : 0;
+  sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now, row: rowId, ts: tsNow }));
+  if (reviewStats) { reviewStats.count++; reviewStats.sum += rating; }
+  currentReviewPage = 0;
+  renderReviewsCarousel();
+  toggleReviewModal();
+  document.getElementById('reviewForm').reset();
+  resetStars();
+  showToast('Thank you! Your review has been published.');
+  loadReviewsFromSheet(true);
+  return;
+}
+
 const payload = {
 action: 'addReview',
 name: name,
@@ -944,7 +1064,6 @@ data = { ok: textResponse.toLowerCase().includes('success') };
 if (data.ok === false) {
 throw new Error(data.error || 'Server rejected review submission');
 }
-const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
 sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now }));
 if (reviewStats) { reviewStats.count++; reviewStats.sum += rating; }
 currentReviewPage = 0;
@@ -1098,7 +1217,7 @@ startCenterAutoSwipe();
 }
 let galleryImages = [];
 let galleryGen = 0;
-let galleryState = 'loading';   // loading | ready | error | off
+let galleryState = 'loading';
 let galleryErrorMsg = '';
 let galleryInfo = '';
 const COLLAGE_WIDTHS = ['w-36', 'w-56', 'w-40', 'w-52', 'w-44'];
@@ -1204,13 +1323,13 @@ if (tag) tag.textContent = 'Campus Gallery';
 }
 function resetCollageRow(rowId, trackId) {
 const old = document.getElementById(rowId);
-const fresh = old.cloneNode(false);          // drops old event listeners
+const fresh = old.cloneNode(false);
 fresh.innerHTML = `<div id="${trackId}" class="flex items-center gap-2.5 shrink-0 w-max"></div>`;
 old.replaceWith(fresh);
 return { row: fresh, track: fresh.firstElementChild };
 }
 function renderGallery() {
-galleryGen++;   // stops any previous animation loop
+galleryGen++;
 const msg = document.getElementById('galleryEmpty');
 const a = resetCollageRow('collageRow1', 'trackRow1');
 const b = resetCollageRow('collageRow2', 'trackRow2');
@@ -1235,19 +1354,23 @@ b.row.classList.add('hidden');
 return;
 }
 msg.classList.add('hidden');
-if (galleryImages.length < 8) {
+const gen = galleryGen;
+gallerySharedDir = 1;
+if (galleryImages.length < 6) {
 a.track.innerHTML = galleryImages.map(galleryItemHTML).join('');
 a.row.classList.remove('hidden');
 b.row.classList.add('hidden');
+if (galleryImages.length > 1) {
+setupInfiniteRow('collageRow1', 'trackRow1', 'left', gen, false);
+}
 return;
 }
 a.track.innerHTML = galleryImages.filter((_, i) => i % 2 === 0).map(galleryItemHTML).join('');
 b.track.innerHTML = galleryImages.filter((_, i) => i % 2 === 1).map(galleryItemHTML).join('');
 a.row.classList.remove('hidden');
 b.row.classList.remove('hidden');
-const gen = galleryGen;
-setupInfiniteRow('collageRow1', 'trackRow1', 'right', gen);
-setupInfiniteRow('collageRow2', 'trackRow2', 'left', gen);
+setupInfiniteRow('collageRow1', 'trackRow1', 'right', gen, true);
+setupInfiniteRow('collageRow2', 'trackRow2', 'left', gen, true);
 }
 async function loadGalleryFromDrive(attempt) {
 attempt = attempt || 0;
@@ -1291,7 +1414,7 @@ galleryErrorMsg = err && err.name === 'AbortError'
 renderGallery();
 if (adminAuth) renderAdminPhotos();
 }
-let adminAuth = null;     // kept in memory only; cleared on logout / page refresh
+let adminAuth = null;
 let adminBusy = false;
 async function apiPost(payload, withAuth) {
 if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) throw new Error('Backend URL is not set');
@@ -1364,7 +1487,7 @@ document.getElementById('adminTabPhotos').className = isReviews ? off : on;
 function renderAdminReviews() {
 const list = document.getElementById('adminReviewsList');
 if (!sheetReviews.length) {
-list.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No reviews in the sheet yet.</p>';
+list.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No reviews yet.</p>';
 return;
 }
 list.innerHTML = sheetReviews.map((r, i) => `
@@ -1385,13 +1508,17 @@ if (!r || !r.row || adminBusy) return;
 if (!confirm(`Delete the review by ${r.name}?`)) return;
 adminBusy = true;
 try {
+if (isSupabaseEnabled()) {
+await supabaseRequest("reviews", "DELETE", `id=eq.${Number(r.row)}`);
+} else {
 const data = await apiPost({ action: 'deleteReview', row: r.row, ts: r.ts }, true);
 if (!data.ok) throw new Error(data.error || 'Delete failed');
+}
 showToast('Review deleted.');
 } catch (e) {
 showToast(e.message || 'Could not delete review.');
 }
-await loadReviewsFromSheet();   // re-sync row numbers
+await loadReviewsFromSheet();
 renderAdminReviews();
 adminBusy = false;
 }
