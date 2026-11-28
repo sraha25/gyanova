@@ -2,7 +2,7 @@
 <script>
 window.__DRIVE_VIDEO_ID = '18u6Mx6_oOuydS01kvIFE6qK2L5N0Tn-i';
 window.__DRIVE_LOGO_ID = '1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2';
-window.__REVIEWS_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
+window.__GALLERY_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
 window.__DRIVE_LOGO_URLS = [
   'https://lh3.googleusercontent.com/d/' + window.__DRIVE_LOGO_ID + '=w600',
   'https://drive.google.com/thumbnail?id=' + window.__DRIVE_LOGO_ID + '&sz=w600',
@@ -17,7 +17,7 @@ window.fetchLogoViaScript = function () {
       const cached = localStorage.getItem(cacheKey);
       if (cached && cached.startsWith('data:')) return cached;
     } catch (e) {}
-    const api = window.__REVIEWS_API;
+    const api = window.__GALLERY_API;
     if (!api || api.startsWith('PASTE_')) return null;
     for (const action of ['photo', 'thumb']) {
       try {
@@ -96,7 +96,7 @@ try {
 const ctrl = new AbortController();
 const t = setTimeout(() => ctrl.abort(), 12000);
 const res = await fetch(
-window.__REVIEWS_API + '?action=photo&id=' + encodeURIComponent(window.__DRIVE_VIDEO_ID),
+window.__GALLERY_API + '?action=photo&id=' + encodeURIComponent(window.__DRIVE_VIDEO_ID),
 { signal: ctrl.signal, priority: 'high' }
 );
 clearTimeout(t);
@@ -118,9 +118,7 @@ return url;
 return null;
 })();
 </script>
-<script src="https://cdn.tailwindcss.com">
-
-</script>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
@@ -208,22 +206,12 @@ class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#f58529] via-[#dd2a7b] to-
 </label><label class="flex items-center justify-center gap-1.5 p-2 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer has-[:checked]:border-brand-royal has-[:checked]:bg-blue-50 has-[:checked]:text-brand-royal"><input type="radio" name="reviewerType" value="Guardian" class="hidden"><i class="fa-solid fa-users text-xs"></i> Guardian
 </label></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Your Name</label><input type="text" id="reviewerName" required placeholder="e.g. Rahul Das / Anjali Sen" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Class / Stream</label><select id="reviewerClass" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white"><option value="Class 5 (Primary)">Class 5</option><option value="Class 6 (Foundation)">Class 6</option><option value="Class 7 (Foundation)">Class 7</option><option value="Class 8 (Foundation)">Class 8</option><option value="Class 9 (Secondary)">Class 9</option><option value="Class 10 (Madhyamik Batch)">Class 10</option><option value="Class 11 (WBCHSE)">Class 11</option><option value="Class 12 (WBCHSE)">Class 12</option></select></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Your Rating</label><div class="flex items-center gap-2 text-2xl text-amber-400" id="starSelector"><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(1)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(2)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(3)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(4)"></i><i class="fa-regular fa-star cursor-pointer text-slate-300 transition-colors" onclick="setRating(5)"></i></div><input type="hidden" id="selectedRating" value="0"></div><div><div class="flex items-center justify-between mb-1"><label class="block text-[11px] font-bold text-slate-700">Review Feedback</label></div><textarea id="reviewerComment" required rows="3" placeholder="Share your experience..." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></div><button type="submit" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">
 Submit Review
-</button></form></div></div><div id="adminModal" class="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Academy</span><h3 class="text-sm font-extrabold text-slate-900">Admin Panel</h3></div><div class="flex items-center gap-2"><button id="adminLogoutBtn" onclick="adminLogout()" class="hidden text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 active:scale-95">Logout</button><button onclick="closeAdmin()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div></div><form id="adminLoginView" onsubmit="adminLogin(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Admin ID</label><input type="text" id="adminUser" required autocomplete="username" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Password</label><input type="password" id="adminPass" required autocomplete="current-password" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><p id="adminLoginError" class="hidden text-[11px] text-red-600 font-semibold"></p><button type="submit" id="adminLoginBtn" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Login</button></form><div id="adminPanelView" class="hidden mt-4"><div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl text-xs font-bold mb-3"><button id="adminTabReviews" onclick="adminTab('reviews')" class="py-2 rounded-lg transition">Reviews</button><button id="adminTabPhotos" onclick="adminTab('photos')" class="py-2 rounded-lg transition">Photos</button></div><div id="adminReviewsPane"><div id="adminReviewsList" class="space-y-2"></div></div><div id="adminPhotosPane" class="hidden"><div class="rounded-2xl border border-dashed border-slate-300 p-3 bg-slate-50 space-y-2"><label class="block text-[11px] font-bold text-slate-700">Upload photos to the Institute Gallery</label><input type="file" id="adminFiles" accept="image/*" multiple class="block w-full text-[11px] text-slate-600"><input type="text" id="adminCaption" maxlength="100" placeholder="Caption (optional)" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white"><button id="adminUploadBtn" onclick="adminUpload()" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Upload</button><p id="adminUploadStatus" class="text-[11px] text-slate-500"></p></div><div id="adminPhotosGrid" class="grid grid-cols-3 gap-2 mt-3"></div></div></div></div></div><div id="inquiryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-bottom duration-300"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Admissions</span><h3 class="text-sm font-extrabold text-slate-900">Direct Admission Desk</h3></div><button onclick="closeInquiryModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="handleInquirySubmit(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Student / Guardian Name</label><b><input type="text" id="inqName" required placeholder="Enter full name" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></b></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Target Class / Program</label><div class="relative"><select id="inqProgram" required class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white font-medium text-slate-700 appearance-none pr-8"></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fa-solid fa-chevron-down text-[10px]"></i></div></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Message or Query (Optional)</label><b><textarea id="inqMessage" rows="2" placeholder="Fee details, batch timing, etc." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></b></div><button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 active:scale-98 transition"><i class="fa-brands fa-whatsapp text-sm"></i> Send Instant Inquiry via WhatsApp
+</button></form></div></div><div id="adminModal" class="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="closeAdmin()"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl" onclick="event.stopPropagation()"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Academy</span><h3 class="text-sm font-extrabold text-slate-900">Admin Login</h3></div><button onclick="closeAdmin()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form id="adminLoginView" onsubmit="adminLogin(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Admin ID</label><input type="text" id="adminUser" required autocomplete="username" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Password</label><input type="password" id="adminPass" required autocomplete="current-password" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><p id="adminLoginError" class="hidden text-[11px] text-red-600 font-semibold"></p><button type="submit" id="adminLoginBtn" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Login</button></form></div></div><div id="inquiryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-bottom duration-300"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Admissions</span><h3 class="text-sm font-extrabold text-slate-900">Direct Admission Desk</h3></div><button onclick="closeInquiryModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="handleInquirySubmit(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Student / Guardian Name</label><b><input type="text" id="inqName" required placeholder="Enter full name" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></b></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Target Class / Program</label><div class="relative"><select id="inqProgram" required class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white font-medium text-slate-700 appearance-none pr-8"></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fa-solid fa-chevron-down text-[10px]"></i></div></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Message or Query (Optional)</label><b><textarea id="inqMessage" rows="2" placeholder="Fee details, batch timing, etc." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></b></div><button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 active:scale-98 transition"><i class="fa-brands fa-whatsapp text-sm"></i> Send Instant Inquiry via WhatsApp
 </button></form></div></div><div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-lg border border-slate-700 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300"><i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toastMsg">Review recorded successfully!</span></div>
 <script>
 const DRIVE_WELCOME_VIDEO_ID = window.__DRIVE_VIDEO_ID;
 const DRIVE_LOGO_ID = window.__DRIVE_LOGO_ID;
 const DRIVE_LOGO_URLS = window.__DRIVE_LOGO_URLS;
-function dataUriToBlobUrl(dataUri, fallbackMime) {
-const parts = String(dataUri).split(',');
-if (parts.length < 2) return null;
-const mimeMatch = parts[0].match(/data:([^;]+);/i);
-const mime = (mimeMatch && mimeMatch[1]) || fallbackMime || 'video/mp4';
-const bin = atob(parts[1]);
-const bytes = new Uint8Array(bin.length);
-for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-return URL.createObjectURL(new Blob([bytes], { type: mime }));
-}
 let introLoaderShowTimer = setTimeout(() => {
 const loader = document.getElementById('introLoader');
 if (loader && !introTextStarted && !introSkipped) loader.style.opacity = '1';
@@ -468,13 +456,6 @@ icon.classList.add('fa-xmark');
 }
 }
 let wasDraggingCollage = false;
-function handleCollageItemClick(e, url, title, desc) {
-if (wasDraggingCollage) {
-e.preventDefault();
-return;
-}
-openLightboxImage(url, title, desc);
-}
 let gallerySharedDir = 1; // 1 = Row 1 forward & Row 2 reverse, -1 = Row 1 reverse & Row 2 forward
 function setupInfiniteRow(rowId, trackId, direction, gen, dualSync) {
 const row = document.getElementById(rowId);
@@ -610,15 +591,13 @@ document.getElementById('imageLightboxModal').classList.remove('hidden');
 function closeLightbox() {
 document.getElementById('imageLightboxModal').classList.add('hidden');
 }
-const REVIEWS_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
+
+// --- GOOGLE DRIVE GALLERY API (READ-ONLY) ---
+const GALLERY_API = window.__GALLERY_API;
 
 // --- SUPABASE DATABASE CONFIGURATION ---
 const SUPABASE_URL      = "https://czzfygynvvnskqghwzxs.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_v5RfjRlloDFwZRloSqYJAw_KEwlaAaq";
-
-function isSupabaseEnabled() {
-  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.startsWith("http"));
-}
 
 async function supabaseRequest(table, method = "GET", query = "", body = null) {
   const url = `${SUPABASE_URL.replace(/\/$/, "")}/rest/v1/${table}${query ? "?" + query : ""}`;
@@ -641,7 +620,7 @@ async function supabaseRequest(table, method = "GET", query = "", body = null) {
 }
 
 let sheetReviews = [];   // live reviews (newest first)
-let reviewsState = 'loading';   // loading | ready | error | off
+let reviewsState = 'loading';   // loading | ready | error
 let reviewsErrorMsg = '';
 function esc(s) {
 return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -668,7 +647,7 @@ row: r.row,
 ts: r.ts
 };
 }
-let reviewStats = null;   // {count, sum} for ALL reviews (server side, not limited to the 200 sent)
+let reviewStats = null;
 let reviewsSig = '';
 function computeRatingStats() {
 const list = getAllReviews();
@@ -706,7 +685,6 @@ starsEl.setAttribute('aria-label', st.avg.toFixed(1) + ' out of 5 stars');
 cntEl.textContent = `Based on ${st.count} ${st.count === 1 ? 'review' : 'reviews'} from Students & Parents`;
 }
 async function loadReviewsFromSheet(silent) {
-if (isSupabaseEnabled()) {
   try {
     const rows = await supabaseRequest("reviews", "GET", "select=*&order=id.desc");
     const mapped = (Array.isArray(rows) ? rows : []).map(r => mapSheetReview({
@@ -733,35 +711,6 @@ if (isSupabaseEnabled()) {
     reviewsErrorMsg = String(err.message || err);
   }
   renderReviewsCarousel();
-  return;
-}
-
-if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
-reviewsState = 'off';
-renderReviewsCarousel();
-return;
-}
-try {
-const res = await fetch(apiUrl('action=reviews&t=' + Date.now()));
-const data = await res.json();
-if (!data.ok) throw new Error(data.error || 'Failed');
-if (!Array.isArray(data.reviews)) throw new Error('This link answered with: ' + Object.keys(data).join(', '));
-const sig = data.reviews.length + '|' + (data.stats ? data.stats.sum : '') + '|' + (data.reviews[0] ? data.reviews[0].ts : 0);
-if (silent && sig === reviewsSig) return;   // nothing changed
-reviewsSig = sig;
-sheetReviews = data.reviews.map(mapSheetReview);
-reviewStats = data.stats ? { count: Number(data.stats.count) || 0, sum: Number(data.stats.sum) || 0 } : null;
-reviewsState = 'ready';
-reviewsErrorMsg = '';
-} catch (err) {
-if (silent) return;   // keep what is already on screen
-console.error('Could not load reviews', err);
-reviewsState = 'error';
-reviewsErrorMsg = /failed to fetch|networkerror|load failed/i.test(String(err.message))
-? 'Could not reach the Apps Script. Check that the Web App access is set to "Anyone".'
-: String(err.message || err);
-}
-renderReviewsCarousel();
 }
 setInterval(() => { if (!document.hidden) loadReviewsFromSheet(true); }, 300000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loadReviewsFromSheet(true); });
@@ -778,7 +727,6 @@ if (reviews.length === 0) {
 const msgs = {
 loading: 'Loading reviews…',
 error: 'Reviews are unavailable right now.',
-off: 'Reviews will appear here soon.',
 ready: 'No reviews yet. Be the first to share your experience!'
 };
 track.innerHTML = `<div class="w-full shrink-0 px-0.5"><div class="bg-white rounded-2xl p-5 text-center text-xs text-slate-500 border border-slate-200/80">${msgs[reviewsState] || ''}${reviewsState === 'error' && reviewsErrorMsg ? `<span class="block mt-1 text-[10px] text-slate-400">${esc(reviewsErrorMsg)}</span>` : ''}</div></div>`;
@@ -1004,10 +952,6 @@ return;
 const role = document.querySelector('input[name="reviewerType"]:checked').value;
 const name = document.getElementById('reviewerName').value.trim();
 const cls = document.getElementById('reviewerClass').value;
-if (!isSupabaseEnabled() && (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_'))) {
-showToast('Review service is not connected yet.');
-return;
-}
 const btn = event.target.querySelector('button[type="submit"]');
 const btnText = btn.textContent;
 reviewSubmitting = true;
@@ -1016,55 +960,17 @@ btn.textContent = 'Submitting...';
 try {
 const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
 const tsNow = Date.now();
-if (isSupabaseEnabled()) {
-  const inserted = await supabaseRequest("reviews", "POST", "", {
-    date: now,
-    name: name,
-    role: role,
-    class_name: cls,
-    rating: rating,
-    comment: comment,
-    ts: tsNow
-  });
-  const rowId = inserted && inserted[0] ? inserted[0].id : 0;
-  sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now, row: rowId, ts: tsNow }));
-  if (reviewStats) { reviewStats.count++; reviewStats.sum += rating; }
-  currentReviewPage = 0;
-  renderReviewsCarousel();
-  toggleReviewModal();
-  document.getElementById('reviewForm').reset();
-  resetStars();
-  showToast('Thank you! Your review has been published.');
-  loadReviewsFromSheet(true);
-  return;
-}
-
-const payload = {
-action: 'addReview',
-name: name,
-class: cls,
-rating: rating,
-comment: comment,
-feedback: comment,
-review: comment,
-role: role
-};
-const res = await fetch(REVIEWS_API, {
-method: 'POST',
-headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-body: JSON.stringify(payload)
+const inserted = await supabaseRequest("reviews", "POST", "", {
+  date: now,
+  name: name,
+  role: role,
+  class_name: cls,
+  rating: rating,
+  comment: comment,
+  ts: tsNow
 });
-const textResponse = await res.text();
-let data;
-try {
-data = JSON.parse(textResponse);
-} catch (e) {
-data = { ok: textResponse.toLowerCase().includes('success') };
-}
-if (data.ok === false) {
-throw new Error(data.error || 'Server rejected review submission');
-}
-sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now }));
+const rowId = inserted && inserted[0] ? inserted[0].id : 0;
+sheetReviews.unshift(mapSheetReview({ name, class: cls, rating, comment, role, date: now, row: rowId, ts: tsNow }));
 if (reviewStats) { reviewStats.count++; reviewStats.sum += rating; }
 currentReviewPage = 0;
 renderReviewsCarousel();
@@ -1072,7 +978,7 @@ toggleReviewModal();
 document.getElementById('reviewForm').reset();
 resetStars();
 showToast('Thank you! Your review has been published.');
-loadReviewsFromSheet();
+loadReviewsFromSheet(true);
 } catch (err) {
 console.error('Review submit error:', err);
 showToast('Error: ' + (err.message || 'Could not submit review'));
@@ -1222,7 +1128,7 @@ let galleryErrorMsg = '';
 let galleryInfo = '';
 const COLLAGE_WIDTHS = ['w-36', 'w-56', 'w-40', 'w-52', 'w-44'];
 function apiUrl(query) {
-return REVIEWS_API + (REVIEWS_API.includes('?') ? '&' : '?') + query;
+return GALLERY_API + (GALLERY_API.includes('?') ? '&' : '?') + query;
 }
 function driveImg(id, w) {
 return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${w}`;
@@ -1285,7 +1191,7 @@ try {
 const ids = Array.from(new Set(batch.map(b => b.id)));
 const res = await fetch(apiUrl('action=thumbs&ids=' + encodeURIComponent(ids.join(','))));
 const data = await res.json();
-if (!data.ok || !data.thumbs) throw new Error(data.error || 'Old script version (no "thumbs" action)');
+if (!data.ok || !data.thumbs) throw new Error(data.error || 'Thumbnail fetch failed');
 batch.forEach(b => {
 const u = data.thumbs[b.id];
 if (u) { b.el.onerror = null; b.el.src = u; } else imgGiveUp(b.el);
@@ -1374,7 +1280,7 @@ setupInfiniteRow('collageRow2', 'trackRow2', 'left', gen, true);
 }
 async function loadGalleryFromDrive(attempt) {
 attempt = attempt || 0;
-if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) {
+if (!GALLERY_API || GALLERY_API.startsWith('PASTE_')) {
 galleryState = 'off';
 galleryImages = [];
 renderGallery();
@@ -1388,7 +1294,7 @@ clearTimeout(timer);
 const data = await res.json();
 if (!data.ok) throw new Error(data.error || 'Failed');
 if (!Array.isArray(data.images)) {
-throw new Error('This link (…' + REVIEWS_API.slice(-12, -5) + ') is running OLD code; it answered with: ' + Object.keys(data).join(', ') + '. Make a New deployment of the latest Code.gs and paste its link into REVIEWS_API.');
+throw new Error('Unexpected response from gallery endpoint.');
 }
 galleryImages = data.images;
 galleryState = 'ready';
@@ -1412,217 +1318,55 @@ galleryErrorMsg = err && err.name === 'AbortError'
 : String(err.message || err);
 }
 renderGallery();
-if (adminAuth) renderAdminPhotos();
 }
-let adminAuth = null;
-let adminBusy = false;
-async function apiPost(payload, withAuth) {
-if (!REVIEWS_API || REVIEWS_API.startsWith('PASTE_')) throw new Error('Backend URL is not set');
-const body = withAuth && adminAuth ? Object.assign({}, payload, { user: adminAuth.user, pass: adminAuth.pass }) : payload;
-const res = await fetch(REVIEWS_API, {
-method: 'POST',
-headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-body: JSON.stringify(body)
-});
-return res.json();
-}
-function openAdmin() {
-document.getElementById('adminModal').classList.remove('hidden');
-showAdminView();
-}
-function closeAdmin() {
-document.getElementById('adminModal').classList.add('hidden');
-}
-function showAdminView() {
-const loggedIn = !!adminAuth;
-document.getElementById('adminLoginView').classList.toggle('hidden', loggedIn);
-document.getElementById('adminPanelView').classList.toggle('hidden', !loggedIn);
-document.getElementById('adminLogoutBtn').classList.toggle('hidden', !loggedIn);
-if (loggedIn) {
-adminTab('reviews');
-renderAdminReviews();
-renderAdminPhotos();
-} else {
-setTimeout(() => document.getElementById('adminUser').focus(), 50);
-}
-}
-// Admin sign-in uses Supabase Auth. Only ONE admin user exists in Supabase
-// (Authentication > Users) and public sign-ups are switched off.
-// ADMIN_EMAIL must be the email of that user (and the same email used in supabase_security.sql).
+
+// --- SUPABASE ADMIN LOGIN ---
 const ADMIN_LOGIN_ID = 'gyanova';
 const ADMIN_EMAIL = 'gyanova07@gmail.com';
+function openAdmin() {
+  document.getElementById('adminModal').classList.remove('hidden');
+  document.getElementById('adminLoginError').classList.add('hidden');
+  setTimeout(() => document.getElementById('adminUser').focus(), 50);
+}
+function closeAdmin() {
+  document.getElementById('adminModal').classList.add('hidden');
+}
 async function adminLogin(event) {
-event.preventDefault();
-const id = document.getElementById('adminUser').value.trim();
-const pass = document.getElementById('adminPass').value;
-const err = document.getElementById('adminLoginError');
-const btn = document.getElementById('adminLoginBtn');
-err.classList.add('hidden');
-btn.disabled = true;
-btn.textContent = 'Checking...';
-try {
-if (id.toLowerCase() !== ADMIN_LOGIN_ID || !pass) throw new Error('Invalid ID or password');
-const res = await fetch(SUPABASE_URL.replace(/\/$/, '') + '/auth/v1/token?grant_type=password', {
-method: 'POST',
-headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-body: JSON.stringify({ email: ADMIN_EMAIL, password: pass })
-});
-const data = await res.json().catch(() => ({}));
-if (!res.ok || !data.access_token) {
-throw new Error(res.status === 400 || res.status === 401 ? 'Invalid ID or password' : (data.msg || data.error_description || 'Login failed. Please try again.'));
+  event.preventDefault();
+  const id = document.getElementById('adminUser').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  const err = document.getElementById('adminLoginError');
+  const btn = document.getElementById('adminLoginBtn');
+  err.classList.add('hidden');
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+  try {
+    if (id.toLowerCase() !== ADMIN_LOGIN_ID || !pass) throw new Error('Invalid ID or password');
+    const res = await fetch(SUPABASE_URL.replace(/\/$/, '') + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: ADMIN_EMAIL, password: pass })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.access_token) {
+      throw new Error(res.status === 400 || res.status === 401 ? 'Invalid ID or password' : (data.msg || data.error_description || 'Login failed. Please try again.'));
+    }
+    sessionStorage.setItem('gyanova_admin', JSON.stringify({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600))
+    }));
+    document.getElementById('adminPass').value = '';
+    window.location.href = 'admin.html';
+  } catch (e) {
+    err.textContent = e.message || 'Login failed';
+    err.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Login';
+  }
 }
-sessionStorage.setItem('gyanova_admin', JSON.stringify({
-access_token: data.access_token,
-refresh_token: data.refresh_token,
-expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600))
-}));
-document.getElementById('adminPass').value = '';
-window.location.href = 'admin.html';
-} catch (e) {
-err.textContent = e.message || 'Login failed';
-err.classList.remove('hidden');
-} finally {
-btn.disabled = false;
-btn.textContent = 'Login';
-}
-}
-function adminLogout() {
-adminAuth = null;
-document.getElementById('adminUser').value = '';
-document.getElementById('adminPass').value = '';
-showAdminView();
-}
-function adminTab(tab) {
-const isReviews = tab === 'reviews';
-document.getElementById('adminReviewsPane').classList.toggle('hidden', !isReviews);
-document.getElementById('adminPhotosPane').classList.toggle('hidden', isReviews);
-const on = 'py-2 rounded-lg transition bg-white text-brand-navy shadow-sm';
-const off = 'py-2 rounded-lg transition text-slate-500';
-document.getElementById('adminTabReviews').className = isReviews ? on : off;
-document.getElementById('adminTabPhotos').className = isReviews ? off : on;
-}
-function renderAdminReviews() {
-const list = document.getElementById('adminReviewsList');
-if (!sheetReviews.length) {
-list.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No reviews yet.</p>';
-return;
-}
-list.innerHTML = sheetReviews.map((r, i) => `
-<div class="flex items-start justify-between gap-2 p-2.5 rounded-xl border border-slate-200">
-<div class="min-w-0">
-<p class="text-xs font-bold text-slate-800 truncate">${esc(r.name)} <span class="text-[9px] font-semibold text-slate-500">(${esc(r.role)})</span></p>
-<p class="text-[10px] text-slate-500">${esc(r.batch)}${r.date ? ' • ' + esc(r.date) : ''} • ${'★'.repeat(r.rating || 5)}</p>
-<p class="text-[11px] text-slate-600 mt-1 line-clamp-3">${esc(r.comment)}</p>
-</div>
-<button onclick="adminDeleteReview(${i})" ${r.row ? '' : 'disabled'} class="shrink-0 w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center active:scale-95 disabled:opacity-40" aria-label="Delete review">
-<i class="fa-solid fa-trash text-xs"></i>
-</button>
-</div>`).join('');
-}
-async function adminDeleteReview(i) {
-const r = sheetReviews[i];
-if (!r || !r.row || adminBusy) return;
-if (!confirm(`Delete the review by ${r.name}?`)) return;
-adminBusy = true;
-try {
-if (isSupabaseEnabled()) {
-await supabaseRequest("reviews", "DELETE", `id=eq.${Number(r.row)}`);
-} else {
-const data = await apiPost({ action: 'deleteReview', row: r.row, ts: r.ts }, true);
-if (!data.ok) throw new Error(data.error || 'Delete failed');
-}
-showToast('Review deleted.');
-} catch (e) {
-showToast(e.message || 'Could not delete review.');
-}
-await loadReviewsFromSheet();
-renderAdminReviews();
-adminBusy = false;
-}
-function renderAdminPhotos() {
-const grid = document.getElementById('adminPhotosGrid');
-if (!galleryImages.length) {
-grid.innerHTML = '<p class="col-span-3 text-xs text-slate-500 text-center py-4">No photos in the Drive folder yet.</p>';
-return;
-}
-grid.innerHTML = galleryImages.map(img => `
-<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-<img ${imgAttrs(img.id, 300, 'thumb')} alt="" loading="lazy" class="w-full h-full object-cover">
-<button onclick="adminDeleteImage('${esc(img.id)}')" class="absolute top-1 right-1 w-7 h-7 rounded-lg bg-black/60 text-white flex items-center justify-center active:scale-95" aria-label="Delete photo">
-<i class="fa-solid fa-trash text-[10px]"></i>
-</button>
-</div>`).join('');
-}
-function fileToJpegBase64(file, maxDim, quality) {
-return new Promise((resolve, reject) => {
-const url = URL.createObjectURL(file);
-const img = new Image();
-img.onload = () => {
-const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
-const c = document.createElement('canvas');
-c.width = w; c.height = h;
-const ctx = c.getContext('2d');
-ctx.fillStyle = '#fff';
-ctx.fillRect(0, 0, w, h);
-ctx.drawImage(img, 0, 0, w, h);
-URL.revokeObjectURL(url);
-resolve(c.toDataURL('image/jpeg', quality).split(',')[1]);
-};
-img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unsupported image: ' + file.name)); };
-img.src = url;
-});
-}
-async function adminUpload() {
-if (adminBusy) return;
-const input = document.getElementById('adminFiles');
-const files = Array.from(input.files || []);
-const status = document.getElementById('adminUploadStatus');
-const btn = document.getElementById('adminUploadBtn');
-if (!files.length) { status.textContent = 'Choose at least one photo first.'; return; }
-const caption = document.getElementById('adminCaption').value.trim();
-adminBusy = true;
-btn.disabled = true;
-let done = 0, failed = 0;
-for (const file of files) {
-status.textContent = `Uploading ${done + failed + 1} of ${files.length}...`;
-try {
-const data64 = await fileToJpegBase64(file, 1600, 0.85);
-const res = await apiPost({
-action: 'uploadImage',
-name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
-mime: 'image/jpeg',
-data: data64,
-caption
-}, true);
-if (!res.ok) throw new Error(res.error || 'Upload failed');
-done++;
-} catch (e) {
-console.error(e);
-failed++;
-status.textContent = e.message || 'Upload failed';
-}
-}
-input.value = '';
-document.getElementById('adminCaption').value = '';
-status.textContent = `${done} uploaded${failed ? `, ${failed} failed` : ''}.`;
-btn.disabled = false;
-adminBusy = false;
-if (done) await loadGalleryFromDrive();
-}
-async function adminDeleteImage(id) {
-if (adminBusy || !confirm('Remove this photo from the gallery?')) return;
-adminBusy = true;
-try {
-const data = await apiPost({ action: 'deleteImage', id }, true);
-if (!data.ok) throw new Error(data.error || 'Delete failed');
-showToast('Photo removed.');
-} catch (e) {
-showToast(e.message || 'Could not remove photo.');
-}
-adminBusy = false;
-await loadGalleryFromDrive();
-}
+
 function syncHeaderSpacer() {
 const header = document.getElementById('siteHeader');
 const spacer = document.getElementById('headerSpacer');
