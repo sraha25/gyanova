@@ -341,6 +341,22 @@
       margin-bottom: 4px;
     }
 
+    /* School / Gender / Address inputs: one per line while editing */
+    .edit-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 190px;
+      width: 100%;
+    }
+
+    .edit-stack .edit-input {
+      display: block;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
     .btn-action {
       padding: 6px 12px;
       border: none;
@@ -768,19 +784,22 @@
       }[c]));
     }
 
-    async function supabaseRequest(table, method = "GET", query = "", body = null) {
+    async function supabaseRequest(table, method = "GET", query = "", body = null, _retried = false) {
+      try { await ensureFreshToken(); } catch (e) {}
       const url = `${SUPABASE_URL.replace(/\/$/, "")}/rest/v1/${table}${query ? "?" + query : ""}`;
       const headers = {
         "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + getAdminToken(),
         "Content-Type": "application/json",
         "Prefer": "return=representation"
       };
-      if (SUPABASE_ANON_KEY.startsWith("eyJ")) {
-        headers["Authorization"] = `Bearer ${SUPABASE_ANON_KEY}`;
-      }
       const opts = { method, headers };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(url, opts);
+      if (res.status === 401 && !_retried) {
+        try { await ensureFreshToken(true); } catch (e) {}
+        return supabaseRequest(table, method, query, body, true);
+      }
       if (!res.ok) {
         const errText = await res.text();
         throw new Error(`Supabase (${table}): ${errText || res.statusText}`);
@@ -840,7 +859,7 @@
       '</div></div>',
 
       '<div class="gf-card"><label class="gf-q">Phone number (We’ll contact you back) <span class="req">*</span></label>',
-      '<input type="tel" class="gf-input" id="stdPhone" required maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,\'\').slice(0,10)" title="Please enter a valid 10-digit phone number" placeholder="10-digit mobile number" /></div>',
+      '<input type="tel" class="gf-input" id="stdPhone" required pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel-national" oninput="this.value=cleanPhone(this.value)" title="Please enter a valid 10-digit phone number" placeholder="10-digit mobile number" /></div>',
 
       '<div class="gf-card"><label class="gf-q">Which class would you like to join? <span class="req">*</span></label>',
       '<select class="gf-select" id="stdClass" required>',
@@ -868,11 +887,12 @@
       '<button type="reset" class="gf-clear">Clear form</button></div></form>',
 
       '<script>',
+      'function cleanPhone(v){var d=String(v||"").replace(/\\D/g,"");if(d.length>10&&d.indexOf("91")===0)d=d.slice(2);if(d.length>10&&d.charAt(0)==="0")d=d.slice(1);return d.slice(0,10);}',
       'const SUPABASE_URL = ' + JSON.stringify(SUPABASE_URL) + ';',
       'const SUPABASE_ANON_KEY = ' + JSON.stringify(SUPABASE_ANON_KEY) + ';',
       'const STUDENT_API_URL = ' + JSON.stringify(STUDENT_ATTENDANCE_API_URL) + ';',
       'const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.startsWith("http"));',
-      'function sbHeaders(){const h={"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"};if(SUPABASE_ANON_KEY.startsWith("eyJ"))h["Authorization"]="Bearer "+SUPABASE_ANON_KEY;return h;}',
+      'function sbHeaders(){const h={"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"};try{var t=window.parent.getAdminToken();if(t)h["Authorization"]="Bearer "+t;}catch(e){}return h;}',
       'document.getElementById("addStdForm").addEventListener("submit",async(e)=>{e.preventDefault();',
       'const btn=document.getElementById("saveStdBtn"),msg=document.getElementById("statusMsg");btn.disabled=true;btn.textContent="Submitting...";msg.className="msg";',
       'try{',
@@ -891,7 +911,7 @@
       'if(USE_SUPABASE){',
       'const baseUrl=SUPABASE_URL.replace(/\\/$/,"")+"/rest/v1/students";',
       'if(!nextId){const existingRes=await fetch(baseUrl+"?select=student_id",{headers:sbHeaders()});',
-      'const existing=existingRes.ok?await existingRes.json():[];let maxNum=1000;',
+      'if(!existingRes.ok){throw new Error("Could not verify existing student IDs. Please try again.");}const existing=await existingRes.json();let maxNum=1000;',
       '(Array.isArray(existing)?existing:[]).forEach(r=>{const m=String(r.student_id||"").match(/^STU-(\\d+)$/i);if(m&&parseInt(m[1],10)>maxNum)maxNum=parseInt(m[1],10);});',
       'nextId="STU-"+(maxNum+1);}',
       'const payload={student_id:nextId,timestamp:ts,name:nameVal,branch:branchVal,class_name:classVal,phone:phoneVal,gender:genderVal,school:schoolVal,address:addressVal};',
@@ -967,7 +987,8 @@
       'const SUPABASE_URL = ' + JSON.stringify(SUPABASE_URL) + ';',
       'const SUPABASE_ANON_KEY = ' + JSON.stringify(SUPABASE_ANON_KEY) + ';',
       'const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.startsWith("http"));',
-      'function sbHeaders(){const h={"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"};if(SUPABASE_ANON_KEY.startsWith("eyJ"))h["Authorization"]="Bearer "+SUPABASE_ANON_KEY;return h;}',
+      'function sbHeaders(){const h={"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json","Prefer":"return=representation"};try{var t=window.parent.getAdminToken();if(t)h["Authorization"]="Bearer "+t;}catch(e){}return h;}',
+      'function esc(s){var d=document.createElement("div");d.textContent=String(s==null?"":s);return d.innerHTML.replace(/"/g,"&quot;").replace(/\'/g,"&#39;");}',
       'let allStudents=[],currentSessionID=null,currentDbRowId=null;const LS_KEY="teacherPortal_queue";',
       'function getQueue(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"[]");}catch(e){return [];}}',
       'const closeCheckbox=document.getElementById("closeClass"),submitBtn=document.getElementById("submitBtn"),addLateBtn=document.getElementById("addLateBtn");',
@@ -975,25 +996,74 @@
       'function saveToQueue(payload,dbRowId){let queue=getQueue();if(!currentSessionID)currentSessionID=Date.now().toString();const index=queue.findIndex(q=>q.id===currentSessionID);const sessionData={id:currentSessionID,dbRowId:dbRowId||currentDbRowId,payload:payload,timestamp:new Date().toLocaleString()};if(index>-1)queue[index]=sessionData;else queue.push(sessionData);try{localStorage.setItem(LS_KEY,JSON.stringify(queue));}catch(e){}updateQueueUI();}',
       'function removeFromQueue(id){let queue=getQueue();queue=queue.filter(q=>q.id!==id);try{localStorage.setItem(LS_KEY,JSON.stringify(queue));}catch(e){}updateQueueUI();currentSessionID=null;currentDbRowId=null;}',
       'function updateQueueUI(){const queue=getQueue(),countEl=document.getElementById("queueCount");countEl.innerText=queue.length;countEl.style.display=queue.length>0?"inline-block":"none";try{window.parent.postMessage({type:"activeClassCount",count:queue.length},"*");}catch(e){}}',
-      'function openQueueModal(){const queue=getQueue(),listEl=document.getElementById("queueList");listEl.innerHTML="";if(queue.length===0)listEl.innerHTML="<li class=\'q-empty\'>No unended active classes.</li>";else{queue.forEach(item=>{const p=item.payload,className=p.students.length>0?p.students[0].classVal:"Unknown",li=document.createElement("li");li.className="queue-item";li.innerHTML=`<div class="q-title">${p.teacher} - ${p.subject}</div><div class="q-meta">${className} • ${p.branch} • ${item.timestamp}</div>`;li.onclick=()=>loadSessionFromQueue(item);listEl.appendChild(li);});}document.getElementById("queueModal").style.display="flex";}',
+      'function openQueueModal(){const queue=getQueue(),listEl=document.getElementById("queueList");listEl.innerHTML="";if(queue.length===0)listEl.innerHTML="<li class=\'q-empty\'>No unended active classes.</li>";else{queue.forEach(item=>{const p=item.payload,className=p.students.length>0?p.students[0].classVal:"Unknown",li=document.createElement("li");li.className="queue-item";li.innerHTML=`<div class="q-title">${esc(p.teacher)} - ${esc(p.subject)}</div><div class="q-meta">${esc(className)} • ${esc(p.branch)} • ${esc(item.timestamp)}</div>`;li.onclick=()=>loadSessionFromQueue(item);listEl.appendChild(li);});}document.getElementById("queueModal").style.display="flex";}',
       'function loadSessionFromQueue(session){if(allStudents.length===0){alert("The student database is still loading... please wait 5 seconds and try again.");return;}const p=session.payload;document.getElementById("teacherName").value=p.teacher;document.getElementById("subject").value=p.subject;document.getElementById("description").value=p.description;document.querySelectorAll(\'input[name="branch"]\').forEach(r=>{r.checked=(r.value===p.branch);});const savedClass=p.students.length>0?p.students[0].classVal:"";if(savedClass){document.querySelectorAll(".class-selector").forEach(c=>{if(c.value===savedClass){c.checked=true;updateStudentList();const names=p.students.map(s=>s.name);document.querySelectorAll(".student-checkbox").forEach(b=>{if(names.includes(b.value))b.checked=true;});}});}currentSessionID=session.id;currentDbRowId=session.dbRowId||null;document.getElementById("queueModal").style.display="none";document.getElementById("submitBtn").style.display="none";document.getElementById("postSubmitActions").style.display="flex";}',
       'window.addEventListener("load",async()=>{updateQueueUI();try{if(USE_SUPABASE){const res=await fetch(SUPABASE_URL.replace(/\\/$/,"")+"/rest/v1/students?select=name,phone,branch,class_name",{headers:sbHeaders()});if(!res.ok)throw new Error(await res.text());const rows=await res.json();allStudents=rows.map(r=>({name:String(r.name||"").trim(),phone:String(r.phone||"").trim(),branchVal:String(r.branch||"").trim(),classVal:String(r.class_name||"").trim()})).filter(s=>s.name&&s.branchVal&&s.classVal);const branches=Array.from(new Set(allStudents.map(s=>s.branchVal)));if(branches.length===0)branches.push("Boardghar","Madhyamgram");renderBranches(branches);}else{const response=await fetch(scriptURL);const data=await response.json();if(data.error)throw new Error(data.error);allStudents=data.students||[];renderBranches(data.branches||[]);}document.getElementById("data-status").innerHTML=USE_SUPABASE?"✅ Supabase Connected":"✅ Database Connected";document.getElementById("data-status").style.color="var(--success)";document.getElementById("submitBtn").disabled=false;generateClassCheckboxes();}catch(error){console.error(error);document.getElementById("data-status").innerHTML="❌ Connection Failed.";document.getElementById("data-status").style.color="var(--danger)";}});',
-      'function renderBranches(branchList){const container=document.getElementById("branchContainer");container.innerHTML="";branchList.sort();branchList.forEach(branchName=>{const label=document.createElement("label");label.innerHTML=`<input type="radio" name="branch" class="branch-selector" value="${branchName}" required> ${branchName}`;container.appendChild(label);});document.querySelectorAll(".branch-selector").forEach(b=>b.addEventListener("change",updateStudentList));}',
+      'function renderBranches(branchList){const container=document.getElementById("branchContainer");container.innerHTML="";branchList.sort();branchList.forEach(branchName=>{const label=document.createElement("label");label.innerHTML=`<input type="radio" name="branch" class="branch-selector" value="${esc(branchName)}" required> ${esc(branchName)}`;container.appendChild(label);});document.querySelectorAll(".branch-selector").forEach(b=>b.addEventListener("change",updateStudentList));}',
       'function generateClassCheckboxes(){const classContainer=document.getElementById("classCheckboxes");classContainer.innerHTML="";for(let i=5;i<=12;i++){let label=document.createElement("label");label.className="class-option";label.innerHTML=`<input type="radio" name="classGroup" class="class-selector" value="Class ${i}"> Class ${i}`;classContainer.appendChild(label);}document.querySelectorAll(".class-selector").forEach(chk=>chk.addEventListener("change",updateStudentList));}',
-      'function updateStudentList(){const studentContainer=document.getElementById("studentListContainer"),bulkActions=document.getElementById("bulkActions");studentContainer.style.display="block";studentContainer.innerHTML="";const selectedClassRadio=document.querySelector(".class-selector:checked"),selectedBranchRadio=document.querySelector(".branch-selector:checked");if(selectedClassRadio&&selectedBranchRadio){const selClass=selectedClassRadio.value.toString().trim().toLowerCase(),selBranch=selectedBranchRadio.value.toString().trim().toLowerCase();let filteredStudents=allStudents.filter(s=>s.classVal.toLowerCase()===selClass&&s.branchVal.toLowerCase()===selBranch);if(filteredStudents.length>0){let header=document.createElement("div");header.className="class-header";header.innerText=`${selectedBranchRadio.value} - ${selectedClassRadio.value}`;studentContainer.appendChild(header);filteredStudents.forEach(std=>{let div=document.createElement("div");div.className="student-item";div.innerHTML=`<label><input type="checkbox" class="student-checkbox" value="${std.name}" data-phone="${std.phone}" data-class="${std.classVal}"> ${std.name}</label>`;studentContainer.appendChild(div);});bulkActions.style.display="flex";}else{studentContainer.innerHTML=`<div style="padding:30px;color:#94a3b8;text-align:center;">No students found.</div>`;bulkActions.style.display="none";}}else{bulkActions.style.display="none";studentContainer.innerHTML=\'<div style="padding:30px;color:#94a3b8;text-align:center;">Please select <b>both</b> a Branch and a Class.</div>\';}}',
+      'function updateStudentList(){const studentContainer=document.getElementById("studentListContainer"),bulkActions=document.getElementById("bulkActions");studentContainer.style.display="block";studentContainer.innerHTML="";const selectedClassRadio=document.querySelector(".class-selector:checked"),selectedBranchRadio=document.querySelector(".branch-selector:checked");if(selectedClassRadio&&selectedBranchRadio){const selClass=selectedClassRadio.value.toString().trim().toLowerCase(),selBranch=selectedBranchRadio.value.toString().trim().toLowerCase();let filteredStudents=allStudents.filter(s=>s.classVal.toLowerCase()===selClass&&s.branchVal.toLowerCase()===selBranch);if(filteredStudents.length>0){let header=document.createElement("div");header.className="class-header";header.innerText=`${selectedBranchRadio.value} - ${selectedClassRadio.value}`;studentContainer.appendChild(header);filteredStudents.forEach(std=>{let div=document.createElement("div");div.className="student-item";div.innerHTML=`<label><input type="checkbox" class="student-checkbox" value="${esc(std.name)}" data-phone="${esc(std.phone)}" data-class="${esc(std.classVal)}"> ${esc(std.name)}</label>`;studentContainer.appendChild(div);});bulkActions.style.display="flex";}else{studentContainer.innerHTML=`<div style="padding:30px;color:#94a3b8;text-align:center;">No students found.</div>`;bulkActions.style.display="none";}}else{bulkActions.style.display="none";studentContainer.innerHTML=\'<div style="padding:30px;color:#94a3b8;text-align:center;">Please select <b>both</b> a Branch and a Class.</div>\';}}',
       'function toggleAll(status){document.querySelectorAll(".student-checkbox").forEach(box=>{box.checked=status;});}',
       'const form=document.getElementById("mainForm"),loader=document.getElementById("loader"),modal=document.getElementById("statusModal"),modalIcon=document.getElementById("modalIcon"),modalText=document.getElementById("modalText"),actionBtns=document.getElementById("postSubmitActions");',
       'form.addEventListener("submit",e=>{e.preventDefault();handleSubmit();});function handleAddLate(){handleSubmit(!document.getElementById("closeClass").checked);}',
-      'async function handleSubmit(keepOpen=false){loader.style.display="block";const branchInput=document.querySelector(\'input[name="branch"]:checked\');if(!branchInput){alert("Select Branch");loader.style.display="none";return;}let selectedStudents=[];document.querySelectorAll(".student-checkbox:checked").forEach(box=>{selectedStudents.push({name:box.value,phone:box.getAttribute("data-phone"),classVal:box.getAttribute("data-class")});});if(selectedStudents.length===0){let selectedRadio=document.querySelector(".class-selector:checked");if(!selectedRadio){alert("Select Class");loader.style.display="none";return;}selectedStudents.push({name:"(None/Absent)",phone:"",classVal:selectedRadio.value});}let isCloseRequested=document.getElementById("closeClass").checked;if(isCloseRequested&&!currentSessionID){alert("⚠️ You cannot END a class that hasn\'t STARTED yet.\\n\\nPlease uncheck \'END Class\'.");loader.style.display="none";return;}let payload={teacher:document.getElementById("teacherName").value.trim(),subject:document.getElementById("subject").value.trim(),branch:branchInput.value,description:document.getElementById("description").value.trim(),students:selectedStudents,close:isCloseRequested};try{if(USE_SUPABASE){const baseUrl=SUPABASE_URL.replace(/\\/$/,"")+"/rest/v1/attendance";const now=new Date(),startStr=now.toISOString().slice(0,10)+" "+now.toTimeString().slice(0,5),timeStr=now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),classVal=selectedStudents[0].classVal,incomingNames=selectedStudents.map(s=>s.name);if(currentDbRowId){const getRes=await fetch(baseUrl+"?id=eq."+currentDbRowId,{headers:sbHeaders()});const rows=await getRes.json(),existing=rows[0];if(existing&&String(existing.status).includes("CLOSED")){loader.style.display="none";alert("This class is already closed.");removeFromQueue(currentSessionID);startNew();return;}const existingNames=existing?String(existing.student_name||""):"";const baseNames=existingNames.split(",").map(x=>x.replace(/\\s*\\([^)]*\\)\\s*$/,"").trim()).filter(Boolean);const toAdd=incomingNames.filter(n=>n!=="(None/Absent)"&&!baseNames.includes(n)).map(n=>n+" ("+timeStr+")");const updatedNames=toAdd.length>0?(existingNames==="(None/Absent)"?toAdd.join(", "):existingNames+", "+toAdd.join(", ")):existingNames;await fetch(baseUrl+"?id=eq."+currentDbRowId,{method:"PATCH",headers:sbHeaders(),body:JSON.stringify({student_name:updatedNames,description:payload.description,status:isCloseRequested?"CLOSED":"OPEN",closed:isCloseRequested?timeStr:""})});}else{const insRes=await fetch(baseUrl,{method:"POST",headers:sbHeaders(),body:JSON.stringify({start_time:startStr,teacher:payload.teacher,subject:payload.subject,branch:payload.branch,class_name:classVal,student_name:incomingNames.join(", "),description:payload.description,status:isCloseRequested?"CLOSED":"OPEN",closed:isCloseRequested?timeStr:""})});if(!insRes.ok)throw new Error(await insRes.text());const inserted=await insRes.json();if(inserted&&inserted[0])currentDbRowId=inserted[0].id;}loader.style.display="none";try{window.parent.postMessage({type:"refreshAttendance"},"*");}catch(err){}if(isCloseRequested){if(currentSessionID)removeFromQueue(currentSessionID);modalIcon.innerHTML="🏁";modalText.innerText="Class Ended!";modal.style.display="flex";setTimeout(()=>{startNew();},1200);}else{saveToQueue(payload,currentDbRowId);modalIcon.innerHTML="✅";modalText.innerText=keepOpen?"Student Added!":"Saved & Active!";modal.style.display="flex";setTimeout(()=>{modal.style.display="none";document.getElementById("submitBtn").style.display="none";actionBtns.style.display="flex";},900);}return;}const response=await fetch(scriptURL,{method:"POST",body:JSON.stringify(payload)});const text=await response.text();loader.style.display="none";if(text.includes("Error:")){alert(text);return;}if(text.includes("Success")){try{window.parent.postMessage({type:"refreshAttendance"},"*");}catch(err){}if(isCloseRequested){if(currentSessionID)removeFromQueue(currentSessionID);modalIcon.innerHTML="🏁";modalText.innerText="Class Ended!";modal.style.display="flex";setTimeout(()=>{startNew();},1500);}else{saveToQueue(payload);modalIcon.innerHTML="✅";modalText.innerText=keepOpen?"Student Added!":"Saved & Active!";modal.style.display="flex";setTimeout(()=>{modal.style.display="none";document.getElementById("submitBtn").style.display="none";actionBtns.style.display="flex";},1000);}}else if(text.includes("CLOSED")){alert("This class is already closed.");if(currentSessionID)removeFromQueue(currentSessionID);startNew();}}catch(err){console.error(err);alert("Error: "+err.message);loader.style.display="none";}}',
+      'async function handleSubmit(keepOpen=false){loader.style.display="block";const branchInput=document.querySelector(\'input[name="branch"]:checked\');if(!branchInput){alert("Select Branch");loader.style.display="none";return;}let selectedStudents=[];document.querySelectorAll(".student-checkbox:checked").forEach(box=>{selectedStudents.push({name:box.value,phone:box.getAttribute("data-phone"),classVal:box.getAttribute("data-class")});});if(selectedStudents.length===0){let selectedRadio=document.querySelector(".class-selector:checked");if(!selectedRadio){alert("Select Class");loader.style.display="none";return;}selectedStudents.push({name:"(None/Absent)",phone:"",classVal:selectedRadio.value});}let isCloseRequested=document.getElementById("closeClass").checked;if(isCloseRequested&&!currentSessionID){alert("⚠️ You cannot END a class that hasn\'t STARTED yet.\\n\\nPlease uncheck \'END Class\'.");loader.style.display="none";return;}let payload={teacher:document.getElementById("teacherName").value.trim(),subject:document.getElementById("subject").value.trim(),branch:branchInput.value,description:document.getElementById("description").value.trim(),students:selectedStudents,close:isCloseRequested};try{if(USE_SUPABASE){const baseUrl=SUPABASE_URL.replace(/\\/$/,"")+"/rest/v1/attendance";const now=new Date(),startStr=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+now.toTimeString().slice(0,5),timeStr=now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),classVal=selectedStudents[0].classVal,incomingNames=selectedStudents.map(s=>s.name);if(currentDbRowId){const getRes=await fetch(baseUrl+"?id=eq."+currentDbRowId,{headers:sbHeaders()});const rows=await getRes.json(),existing=rows[0];if(existing&&String(existing.status).includes("CLOSED")){loader.style.display="none";alert("This class is already closed.");removeFromQueue(currentSessionID);startNew();return;}const existingNames=existing?String(existing.student_name||""):"";const baseNames=existingNames.split(",").map(x=>x.replace(/\\s*\\([^)]*\\)\\s*$/,"").trim()).filter(Boolean);const toAdd=incomingNames.filter(n=>n!=="(None/Absent)"&&!baseNames.includes(n)).map(n=>n+" ("+timeStr+")");const updatedNames=toAdd.length>0?(existingNames==="(None/Absent)"?toAdd.join(", "):existingNames+", "+toAdd.join(", ")):existingNames;await fetch(baseUrl+"?id=eq."+currentDbRowId,{method:"PATCH",headers:sbHeaders(),body:JSON.stringify({student_name:updatedNames,description:payload.description,status:isCloseRequested?"CLOSED":"OPEN",closed:isCloseRequested?timeStr:""})});}else{const insRes=await fetch(baseUrl,{method:"POST",headers:sbHeaders(),body:JSON.stringify({start_time:startStr,teacher:payload.teacher,subject:payload.subject,branch:payload.branch,class_name:classVal,student_name:incomingNames.join(", "),description:payload.description,status:isCloseRequested?"CLOSED":"OPEN",closed:isCloseRequested?timeStr:""})});if(!insRes.ok)throw new Error(await insRes.text());const inserted=await insRes.json();if(inserted&&inserted[0])currentDbRowId=inserted[0].id;}loader.style.display="none";try{window.parent.postMessage({type:"refreshAttendance"},"*");}catch(err){}if(isCloseRequested){if(currentSessionID)removeFromQueue(currentSessionID);modalIcon.innerHTML="🏁";modalText.innerText="Class Ended!";modal.style.display="flex";setTimeout(()=>{startNew();},1200);}else{saveToQueue(payload,currentDbRowId);modalIcon.innerHTML="✅";modalText.innerText=keepOpen?"Student Added!":"Saved & Active!";modal.style.display="flex";setTimeout(()=>{modal.style.display="none";document.getElementById("submitBtn").style.display="none";actionBtns.style.display="flex";},900);}return;}const response=await fetch(scriptURL,{method:"POST",body:JSON.stringify(payload)});const text=await response.text();loader.style.display="none";if(text.includes("Error:")){alert(text);return;}if(text.includes("Success")){try{window.parent.postMessage({type:"refreshAttendance"},"*");}catch(err){}if(isCloseRequested){if(currentSessionID)removeFromQueue(currentSessionID);modalIcon.innerHTML="🏁";modalText.innerText="Class Ended!";modal.style.display="flex";setTimeout(()=>{startNew();},1500);}else{saveToQueue(payload);modalIcon.innerHTML="✅";modalText.innerText=keepOpen?"Student Added!":"Saved & Active!";modal.style.display="flex";setTimeout(()=>{modal.style.display="none";document.getElementById("submitBtn").style.display="none";actionBtns.style.display="flex";},1000);}}else if(text.includes("CLOSED")){alert("This class is already closed.");if(currentSessionID)removeFromQueue(currentSessionID);startNew();}}catch(err){console.error(err);alert("Error: "+err.message);loader.style.display="none";}}',
       'function startNew(){currentSessionID=null;currentDbRowId=null;location.reload();}',
       '<\x2fscript></body></html>'
     ].join('\n');
 
     // --- ADMIN SESSION & AUTHENTICATED API HELPER ---
+    // Legacy Apps Script credentials are no longer used or stored.
     let adminCreds = null;
+    let adminSession = null;
     try {
-      adminCreds = JSON.parse(sessionStorage.getItem("gyanova_admin") || "null");
+      adminSession = JSON.parse(sessionStorage.getItem("gyanova_admin") || "null");
     } catch (e) {}
+
+    function getAdminToken() {
+      return (adminSession && adminSession.access_token) || "";
+    }
+
+    function saveAdminSession() {
+      try { sessionStorage.setItem("gyanova_admin", JSON.stringify(adminSession)); } catch (e) {}
+    }
+
+    let refreshPromise = null;
+    async function ensureFreshToken(force) {
+      if (!adminSession || !adminSession.refresh_token) return;
+      const nowSec = Math.floor(Date.now() / 1000);
+      if (!force && adminSession.expires_at && adminSession.expires_at - nowSec > 120) return;
+      if (refreshPromise) return refreshPromise;
+      refreshPromise = (async () => {
+        try {
+          const res = await fetch(SUPABASE_URL.replace(/\/$/, "") + "/auth/v1/token?grant_type=refresh_token", {
+            method: "POST",
+            headers: { "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: adminSession.refresh_token })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.access_token) {
+            if (res.status === 400 || res.status === 401 || res.status === 403) sessionExpired();
+            throw new Error("Session refresh failed");
+          }
+          adminSession = {
+            access_token: data.access_token,
+            refresh_token: data.refresh_token || adminSession.refresh_token,
+            expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600))
+          };
+          saveAdminSession();
+        } finally {
+          refreshPromise = null;
+        }
+      })();
+      return refreshPromise;
+    }
+
+    function sessionExpired() {
+      alert("Your session has expired. Please log in again.");
+      try { sessionStorage.clear(); } catch (e) {}
+      redirectToLogin();
+    }
+
+    setInterval(() => { ensureFreshToken().catch(() => {}); }, 60000);
 
     function redirectToLogin() {
       try {
@@ -1007,7 +1077,7 @@
       }
     }
 
-    if (!adminCreds || !adminCreds.user || !adminCreds.pass) {
+    if (!adminSession || !adminSession.access_token || !adminSession.refresh_token) {
       redirectToLogin();
     }
 
@@ -1057,7 +1127,7 @@
     window.addEventListener('message', function (e) {
       const iframe = document.getElementById('modal-iframe');
       const fromModal = iframe && e.source === iframe.contentWindow;
-      if (!fromModal && e.origin !== window.location.origin && e.origin !== "https://gyanovaacademy.github.io" && e.origin !== "null") return;
+      if (!fromModal) return;
       if (e.data && e.data.type === 'activeClassCount') setActiveClassBadge(e.data.count);
       if (e.data && e.data.type === 'refreshStudents') loadStudents();
       if (e.data && e.data.type === 'refreshAttendance') loadAttendance();
@@ -1072,6 +1142,13 @@
 
     function logoutAdmin() {
       if (confirm("Are you sure you want to leave this page?")) {
+        try {
+          fetch(SUPABASE_URL.replace(/\/$/, "") + "/auth/v1/logout", {
+            method: "POST",
+            keepalive: true,
+            headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + getAdminToken() }
+          }).catch(() => {});
+        } catch (e) {}
         sessionStorage.clear();
         try { localStorage.removeItem(ACTIVE_COUNT_KEY); } catch (e) {}
         redirectToLogin();
@@ -1190,10 +1267,11 @@
     }
 
     // --- STUDENTS (Direct DB + Class & Branch Filters + Count Display) ---
-    async function loadStudents() {
+    async function loadStudents(silent) {
+      silent = silent === true;
       const tbody = document.getElementById('students-body');
       const badge = document.getElementById('students-count-badge');
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Fetching student records...</td></tr>`;
+      if (!silent) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Fetching student records...</td></tr>`;
       try {
         if (isSupabaseEnabled()) {
           const rows = await supabaseRequest("students", "GET", "select=*&order=id.asc");
@@ -1224,8 +1302,10 @@
         }
 
         populateStudentFilterDropdowns(cachedStudents);
+        if (silent && document.querySelector('#students-body .edit-input')) return;
         filterStudents();
       } catch (err) {
+        if (silent) return;
         if (badge) badge.textContent = "0 students found";
         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:red;">Error loading students: ${escapeHtml(err.message)}</td></tr>`;
       }
@@ -1324,9 +1404,11 @@
         <td data-label="Branch"><input type="text" class="edit-input" id="edit-branch-${safeId}" value="${escapeHtml(student.branch)}" placeholder="Branch" /></td>
         <td data-label="Contact Number"><input type="text" class="edit-input" id="edit-phone-${safeId}" value="${escapeHtml(student.phone)}" placeholder="Phone" /></td>
         <td data-label="School / Details">
-          <input type="text" class="edit-input" id="edit-school-${safeId}" value="${escapeHtml(student.school || '')}" placeholder="School" />
-          <input type="text" class="edit-input" id="edit-gender-${safeId}" value="${escapeHtml(student.gender || '')}" placeholder="Gender" />
-          <input type="text" class="edit-input" id="edit-address-${safeId}" value="${escapeHtml(student.address || '')}" placeholder="Address" />
+          <div class="edit-stack">
+            <input type="text" class="edit-input" id="edit-school-${safeId}" value="${escapeHtml(student.school || '')}" placeholder="School name" aria-label="School name" />
+            <input type="text" class="edit-input" id="edit-gender-${safeId}" value="${escapeHtml(student.gender || '')}" placeholder="Gender" aria-label="Gender" />
+            <input type="text" class="edit-input" id="edit-address-${safeId}" value="${escapeHtml(student.address || '')}" placeholder="Address" aria-label="Address" />
+          </div>
         </td>
         <td data-label="Action">
           <button class="btn-action btn-save" onclick="saveStudentEdit('${safeId}', this)">💾 Save</button>
@@ -1455,9 +1537,10 @@
     }
 
     // --- ATTENDANCE ---
-    async function loadAttendance() {
+    async function loadAttendance(silent) {
+      silent = silent === true;
       const tbody = document.getElementById('attendance-body');
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Fetching attendance records...</td></tr>`;
+      if (!silent) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Fetching attendance records...</td></tr>`;
       try {
         let result = null;
         if (isSupabaseEnabled()) {
@@ -1505,36 +1588,8 @@
         populateAttendanceDropdowns(cachedAttendance);
         filterAttendance();
       } catch (err) {
+        if (silent) return;
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Error loading attendance: ${escapeHtml(err.message)}</td></tr>`;
-      }
-    }
-
-    async function archivePreviousYearAttendance() {
-      const lastYear = new Date().getFullYear() - 1;
-      if (!confirm(`Move/archive all attendance records from ${lastYear}?`)) {
-        return;
-      }
-      try {
-        if (isSupabaseEnabled()) {
-          const rows = await supabaseRequest("attendance", "GET", `select=id&start_time=like.${lastYear}%25`);
-          if (!rows || rows.length === 0) {
-            alert(`No attendance records found for ${lastYear}.`);
-            return;
-          }
-          await supabaseRequest("attendance", "DELETE", `start_time=like.${lastYear}%25`);
-          alert(`Archived/removed ${rows.length} attendance record(s) from ${lastYear}.`);
-          loadAttendance();
-          return;
-        }
-        const result = await callStudentAttendanceApi({ action: 'archiveAttendance', year: lastYear });
-        if (result.ok) {
-          alert(`Archived ${result.moved} attendance record(s) from ${result.archivedYear}.`);
-          loadAttendance();
-        } else {
-          alert('Archive failed: ' + (result.error || 'Server error'));
-        }
-      } catch (err) {
-        alert('Error while archiving attendance: ' + err.message);
       }
     }
 
@@ -1559,9 +1614,11 @@
       const branchSel  = document.getElementById('filter-branch');
       const teacherSel = document.getElementById('filter-teacher');
 
+      const prevSel = { c: classSel.value, b: branchSel.value, t: teacherSel.value };
       classSel.innerHTML   = `<option value="">All Classes</option>`   + classes.map(c => `<option value="${escapeHtml(c.toLowerCase())}">${escapeHtml(c)}</option>`).join('');
       branchSel.innerHTML  = `<option value="">All Branches</option>`  + branches.map(b => `<option value="${escapeHtml(b.toLowerCase())}">${escapeHtml(b)}</option>`).join('');
       teacherSel.innerHTML = `<option value="">All Teachers</option>`  + teachers.map(t => `<option value="${escapeHtml(t.toLowerCase())}">${escapeHtml(t)}</option>`).join('');
+      classSel.value = prevSel.c; branchSel.value = prevSel.b; teacherSel.value = prevSel.t;
     }
 
     function parseItemDate(dateStr) {
@@ -1709,9 +1766,10 @@
     }
 
     // --- REVIEWS ---
-    async function loadReviews() {
+    async function loadReviews(silent) {
+      silent = silent === true;
       const tbody = document.getElementById('reviews-body');
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Fetching reviews...</td></tr>`;
+      if (!silent) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Fetching reviews...</td></tr>`;
       try {
         let list = [];
         if (isSupabaseEnabled()) {
@@ -1747,6 +1805,7 @@
           </tr>
         `).join('');
       } catch (err) {
+        if (silent) return;
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;">Error loading reviews: ${escapeHtml(err.message)}</td></tr>`;
       }
     }
@@ -1771,21 +1830,31 @@
       }
     }
 
-    function refreshAllAdminData() {
-      if (!adminCreds || !adminCreds.user || !adminCreds.pass) return;
-      onDateModeChange();
-      loadStudents();
-      loadAttendance();
-      loadReviews();
+    let lastFocusRefresh = 0;
+    function refreshAllAdminData(initial) {
+      if (!adminSession || !adminSession.access_token) return;
+      if (initial) {
+        onDateModeChange();
+        loadStudents();
+        loadAttendance();
+        loadReviews();
+        return;
+      }
+      // Background refresh: never disturb filters, edits or open forms
+      loadStudents(true);
+      loadAttendance(true);
+      loadReviews(true);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      refreshAllAdminData();
+      refreshAllAdminData(true);
     });
 
     window.addEventListener('focus', () => {
-      if (document.visibilityState === 'visible') {
-        refreshAllAdminData();
+      const now = Date.now();
+      if (document.visibilityState === 'visible' && now - lastFocusRefresh > 15000) {
+        lastFocusRefresh = now;
+        refreshAllAdminData(false);
       }
     });
   </script>
