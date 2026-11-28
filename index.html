@@ -1446,9 +1446,14 @@ renderAdminPhotos();
 setTimeout(() => document.getElementById('adminUser').focus(), 50);
 }
 }
+// Admin sign-in uses Supabase Auth. Only ONE admin user exists in Supabase
+// (Authentication > Users) and public sign-ups are switched off.
+// ADMIN_EMAIL must be the email of that user (and the same email used in supabase_security.sql).
+const ADMIN_LOGIN_ID = 'gyanova';
+const ADMIN_EMAIL = 'gyanova07@gmail.com';
 async function adminLogin(event) {
 event.preventDefault();
-const user = document.getElementById('adminUser').value.trim();
+const id = document.getElementById('adminUser').value.trim();
 const pass = document.getElementById('adminPass').value;
 const err = document.getElementById('adminLoginError');
 const btn = document.getElementById('adminLoginBtn');
@@ -1456,9 +1461,21 @@ err.classList.add('hidden');
 btn.disabled = true;
 btn.textContent = 'Checking...';
 try {
-const data = await apiPost({ action: 'login', user, pass }, false);
-if (!data.ok) throw new Error(data.error || 'Login failed');
-sessionStorage.setItem('gyanova_admin', JSON.stringify({ user, pass }));
+if (id.toLowerCase() !== ADMIN_LOGIN_ID || !pass) throw new Error('Invalid ID or password');
+const res = await fetch(SUPABASE_URL.replace(/\/$/, '') + '/auth/v1/token?grant_type=password', {
+method: 'POST',
+headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+body: JSON.stringify({ email: ADMIN_EMAIL, password: pass })
+});
+const data = await res.json().catch(() => ({}));
+if (!res.ok || !data.access_token) {
+throw new Error(res.status === 400 || res.status === 401 ? 'Invalid ID or password' : (data.msg || data.error_description || 'Login failed. Please try again.'));
+}
+sessionStorage.setItem('gyanova_admin', JSON.stringify({
+access_token: data.access_token,
+refresh_token: data.refresh_token,
+expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600))
+}));
 document.getElementById('adminPass').value = '';
 window.location.href = 'admin.html';
 } catch (e) {
