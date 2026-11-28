@@ -1,6 +1,6 @@
-<!DOCTYPE html><html lang="en" class="scroll-smooth"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Gyanova Academy | Mobile Portal</title><meta name="description" content="Gyanova Academy — Empowering Students for Academic Excellence (WBBSE Class 5–10 & WBCHSE Class 11–12). Boardghar & Madhyamgram Centers."><link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w128"><meta property="og:title" content="Gyanova Academy | Admissions Open"><meta property="og:description" content="WBBSE (Class 5–10) & WBCHSE (Class 11–12) coaching with monthly exams, computer studies, and doubt clearing sessions."><meta property="og:type" content="website"><meta property="og:image" content="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w600"><link rel="preconnect" href="https://script.google.com" crossorigin><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin><link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Gyanova Academy | Mobile Portal</title><meta name="description" content="Gyanova Academy — Empowering Students for Academic Excellence (WBBSE Class 5–10 & WBCHSE Class 11–12). Boardghar & Madhyamgram Centers."><link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w128"><meta property="og:title" content="Gyanova Academy | Admissions Open"><meta property="og:description" content="WBBSE (Class 5–10) & WBCHSE (Class 11–12) coaching with monthly exams, computer studies, and doubt clearing sessions."><meta property="og:type" content="website"><meta property="og:image" content="https://lh3.googleusercontent.com/d/1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2=w600"><link rel="preconnect" href="https://czzfygynvvnskqghwzxs.supabase.co" crossorigin><link rel="preconnect" href="https://script.google.com" crossorigin><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin><link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
 <script>
-window.__DRIVE_VIDEO_ID = '18u6Mx6_oOuydS01kvIFE6qK2L5N0Tn-i';
+window.__SUPABASE_VIDEO_URL = 'https://czzfygynvvnskqghwzxs.supabase.co/storage/v1/object/public/media/a.mp4';
 window.__DRIVE_LOGO_ID = '1a87D6XNXzD79W9hUk1VN0Y5ajOgfntk2';
 window.__GALLERY_API = 'https://script.google.com/macros/s/AKfycbyWZGx5Ti4tDHVZsWLnCvfYYDfG7cxn6ZmD9iuBJkfzx-DNI2nU_TACkzvJ-TmysAKk/exec';
 window.__DRIVE_LOGO_URLS = [
@@ -8,15 +8,28 @@ window.__DRIVE_LOGO_URLS = [
   'https://drive.google.com/thumbnail?id=' + window.__DRIVE_LOGO_ID + '&sz=w600',
   'https://drive.google.com/uc?export=view&id=' + window.__DRIVE_LOGO_ID
 ];
+// Clean up any legacy Cache Storage, IndexedDB, or localStorage items so the site takes zero persistent device space
+(function cleanupLegacyStorage() {
+  try {
+    if ('caches' in window) {
+      caches.keys().then(keys => keys.forEach(k => {
+        if (k.startsWith('gyanova-')) caches.delete(k).catch(() => {});
+      })).catch(() => {});
+    }
+  } catch (e) {}
+  try {
+    if ('indexedDB' in window) indexedDB.deleteDatabase('gyanova-media-db');
+  } catch (e) {}
+  try {
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith('gyanova_')) localStorage.removeItem(k);
+    });
+  } catch (e) {}
+})();
 window.__driveLogoScriptPromise = null;
 window.fetchLogoViaScript = function () {
   if (window.__driveLogoScriptPromise) return window.__driveLogoScriptPromise;
   window.__driveLogoScriptPromise = (async function () {
-    const cacheKey = 'gyanova_logo_v2_' + window.__DRIVE_LOGO_ID;
-    try {
-      const cached = localStorage.getItem(cacheKey);
-      if (cached && cached.startsWith('data:')) return cached;
-    } catch (e) {}
     const api = window.__GALLERY_API;
     if (!api || api.startsWith('PASTE_')) return null;
     for (const action of ['photo', 'thumb']) {
@@ -24,7 +37,6 @@ window.fetchLogoViaScript = function () {
         const res = await fetch(api + (api.includes('?') ? '&' : '?') + 'action=' + action + '&id=' + encodeURIComponent(window.__DRIVE_LOGO_ID));
         const data = await res.json();
         if (data && data.ok && typeof data.data === 'string' && data.data.startsWith('data:')) {
-          try { localStorage.setItem(cacheKey, data.data); } catch (e) {}
           return data.data;
         }
       } catch (e) {}
@@ -54,69 +66,6 @@ window.driveLogoFallback = function (el) {
     el.onerror = null;
   }
 };
-window.__welcomeVideoPromise = (async function () {
-const vidKey = 'welcome-video-' + window.__DRIVE_VIDEO_ID + '-v2';
-const cacheKey = 'https://gyanova.local/' + vidKey;
-try {
-if ('caches' in window) {
-const cache = await caches.open('gyanova-media-v2');
-const cached = await cache.match(cacheKey);
-if (cached) {
-const blob = await cached.blob();
-if (blob && blob.size > 0) return URL.createObjectURL(blob);
-}
-}
-} catch (e) {}
-const idbGet = () => new Promise((resolve) => {
-try {
-const req = indexedDB.open('gyanova-media-db', 1);
-req.onupgradeneeded = () => req.result.createObjectStore('files');
-req.onsuccess = () => {
-const tx = req.result.transaction('files', 'readonly');
-const get = tx.objectStore('files').get(vidKey);
-get.onsuccess = () => resolve(get.result || null);
-get.onerror = () => resolve(null);
-};
-req.onerror = () => resolve(null);
-} catch (e) { resolve(null); }
-});
-const idbPut = (blob) => {
-try {
-const req = indexedDB.open('gyanova-media-db', 1);
-req.onupgradeneeded = () => req.result.createObjectStore('files');
-req.onsuccess = () => {
-const tx = req.result.transaction('files', 'readwrite');
-tx.objectStore('files').put(blob, vidKey);
-};
-} catch (e) {}
-};
-const idbBlob = await idbGet();
-if (idbBlob && idbBlob.size > 0) return URL.createObjectURL(idbBlob);
-try {
-const ctrl = new AbortController();
-const t = setTimeout(() => ctrl.abort(), 12000);
-const res = await fetch(
-window.__GALLERY_API + '?action=photo&id=' + encodeURIComponent(window.__DRIVE_VIDEO_ID),
-{ signal: ctrl.signal, priority: 'high' }
-);
-clearTimeout(t);
-const data = await res.json();
-if (data && data.ok && typeof data.data === 'string' && data.data.startsWith('data:')) {
-const blob = await (await fetch(data.data)).blob();
-const url = URL.createObjectURL(blob);
-idbPut(blob);
-try {
-if ('caches' in window) {
-caches.open('gyanova-media-v2').then(c =>
-c.put(cacheKey, new Response(blob, { headers: { 'Content-Type': blob.type || 'video/mp4' } }))
-).catch(() => {});
-}
-} catch (e) {}
-return url;
-}
-} catch (e) {}
-return null;
-})();
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -209,7 +158,7 @@ Submit Review
 </button></form></div></div><div id="adminModal" class="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="closeAdmin()"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl" onclick="event.stopPropagation()"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Academy</span><h3 class="text-sm font-extrabold text-slate-900">Admin Login</h3></div><button onclick="closeAdmin()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form id="adminLoginView" onsubmit="adminLogin(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Admin ID</label><input type="text" id="adminUser" required autocomplete="username" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Password</label><input type="password" id="adminPass" required autocomplete="current-password" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></div><p id="adminLoginError" class="hidden text-[11px] text-red-600 font-semibold"></p><button type="submit" id="adminLoginBtn" class="w-full py-2.5 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold active:scale-98 transition shadow">Login</button></form></div></div><div id="inquiryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity"><div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-bottom duration-300"><div class="flex items-center justify-between pb-3 border-b border-slate-100"><div><span class="text-[10px] font-bold text-brand-accentRed uppercase">Gyanova Admissions</span><h3 class="text-sm font-extrabold text-slate-900">Direct Admission Desk</h3></div><button onclick="closeInquiryModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="handleInquirySubmit(event)" class="mt-4 space-y-3"><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Student / Guardian Name</label><b><input type="text" id="inqName" required placeholder="Enter full name" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></b></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Target Class / Program</label><div class="relative"><select id="inqProgram" required class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal bg-white font-medium text-slate-700 appearance-none pr-8"></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fa-solid fa-chevron-down text-[10px]"></i></div></div></div><div><label class="block text-[11px] font-bold text-slate-700 mb-1">Message or Query (Optional)</label><b><textarea id="inqMessage" rows="2" placeholder="Fee details, batch timing, etc." class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-royal"></textarea></b></div><button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 active:scale-98 transition"><i class="fa-brands fa-whatsapp text-sm"></i> Send Instant Inquiry via WhatsApp
 </button></form></div></div><div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-lg border border-slate-700 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300"><i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toastMsg">Review recorded successfully!</span></div>
 <script>
-const DRIVE_WELCOME_VIDEO_ID = window.__DRIVE_VIDEO_ID;
+const SUPABASE_VIDEO_URL = window.__SUPABASE_VIDEO_URL;
 const DRIVE_LOGO_ID = window.__DRIVE_LOGO_ID;
 const DRIVE_LOGO_URLS = window.__DRIVE_LOGO_URLS;
 let introLoaderShowTimer = setTimeout(() => {
@@ -224,8 +173,8 @@ loader.style.opacity = '0';
 setTimeout(() => loader.remove(), 300);
 }
 }
-async function loadWelcomeVideoFromDrive(videoEl) {
-const tryPlayUrl = (url) => new Promise((resolve) => {
+function streamWelcomeVideo(videoEl) {
+return new Promise((resolve) => {
 let settled = false;
 const done = (ok) => {
 if (settled) return;
@@ -234,6 +183,7 @@ videoEl.removeEventListener('loadeddata', onReady);
 videoEl.removeEventListener('canplay', onReady);
 videoEl.removeEventListener('error', onErr);
 clearTimeout(timer);
+if (ok) hideIntroLoader();
 resolve(ok);
 };
 const onReady = () => {
@@ -242,32 +192,13 @@ if (p && typeof p.catch === 'function') p.catch(() => {});
 done(true);
 };
 const onErr = () => done(false);
-const timer = setTimeout(() => done(false), 3000);
+const timer = setTimeout(() => done(false), 6000);
 videoEl.addEventListener('loadeddata', onReady, { once: true });
 videoEl.addEventListener('canplay', onReady, { once: true });
 videoEl.addEventListener('error', onErr, { once: true });
-videoEl.src = url;
+videoEl.src = SUPABASE_VIDEO_URL;
 videoEl.load();
 });
-try {
-const prefetchedUrl = await window.__welcomeVideoPromise;
-if (prefetchedUrl && await tryPlayUrl(prefetchedUrl)) {
-hideIntroLoader();
-return true;
-}
-} catch (e) {}
-const directUrls = [
-`https://drive.usercontent.google.com/download?id=${DRIVE_WELCOME_VIDEO_ID}&export=download&confirm=t`,
-`https://drive.google.com/uc?export=download&id=${DRIVE_WELCOME_VIDEO_ID}`
-];
-for (const u of directUrls) {
-if (await tryPlayUrl(u)) {
-hideIntroLoader();
-return true;
-}
-}
-hideIntroLoader();
-return false;
 }
 let introSkipped = false;
 const sloganBengali = "যা বিদ্যা সা বিমুক্তয়ে ";
@@ -324,8 +255,9 @@ introVideo.addEventListener('ended', () => {
 clearTimeout(introSafetyTimer);
 setTimeout(() => { if (!introSkipped) flyLogoToHeader(); }, 500);
 });
-loadWelcomeVideoFromDrive(introVideo).then((loaded) => {
+streamWelcomeVideo(introVideo).then((loaded) => {
 if (!loaded && !introTextStarted && !introSkipped) {
+hideIntroLoader();
 startIntroTextSequence();
 clearTimeout(introSafetyTimer);
 introSafetyTimer = setTimeout(() => {
@@ -396,7 +328,7 @@ const go = () => {
 requestAnimationFrame(() => requestAnimationFrame(() => {
 const wrap = document.getElementById('introVideoWrap');
 if (wrap) wrap.style.opacity = '0';
-if (v) { try { v.pause(); } catch (e) {} }
+if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} }
 ['phaseWelcome', 'phaseBrand'].forEach(id => {
 const el = document.getElementById(id);
 if (el) { el.style.transition = 'opacity .35s ease'; el.style.opacity = '0'; }
@@ -438,6 +370,8 @@ function skipIntro() {
 introSkipped = true;
 const splash = document.getElementById('introSplash');
 if (splash) {
+const v = document.getElementById('introVideo');
+if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} }
 splash.classList.add('opacity-0', 'pointer-events-none');
 setTimeout(() => splash.remove(), 1000);
 if (!window.__logoFlying) revealHeaderLogo();
@@ -1384,9 +1318,6 @@ try { loadGalleryFromDrive(); } catch (e) { console.error(e); }
 try { loadReviewsFromSheet(); } catch (e) { console.error(e); }
 };
 window.addEventListener('load', () => {
-if (window.__welcomeVideoPromise && typeof window.__welcomeVideoPromise.finally === 'function') {
-window.__welcomeVideoPromise.finally(() => window.__startBackgroundDataLoads());
-}
 setTimeout(() => window.__startBackgroundDataLoads(), 1500);
 syncHeaderSpacer();
 renderReviewsCarousel();
